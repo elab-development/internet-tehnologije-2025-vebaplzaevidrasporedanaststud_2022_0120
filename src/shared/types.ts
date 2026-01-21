@@ -7,6 +7,7 @@ export type HolidayType = "KOLOKVIJUMSKA_NEDELJA" | "ISPITNI_ROK" | "BEZ_AKTIVNO
 
 export interface JWTPayload {
     userId: string;
+    username: string;
     role: Role;
     email: string;
 }

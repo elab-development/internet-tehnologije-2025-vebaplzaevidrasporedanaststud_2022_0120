@@ -1,0 +1,131 @@
+"use client";
+
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/Button";
+
+function LoginContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const isRegistered = searchParams.get("registered") === "success";
+    const [formData, setFormData] = useState({ username: "", password: "" });
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Redirect based on role
+                if (data.user.role === "ADMIN") {
+                    router.push("/admin/dashboard");
+                } else {
+                    router.push("/student/dashboard");
+                }
+                router.refresh();
+            } else {
+                setError(data.error || "Prijava nije uspela.");
+            }
+        } catch (err) {
+            setError("Došlo je do greške na mreži.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <main className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Decorative Orbs */}
+            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-3xl -z-10" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl -z-10" />
+
+            <div className="w-full max-w-md">
+                <div className="text-center mb-10">
+                    <Link href="/" className="inline-flex items-center gap-2 mb-8 group">
+                        <div className="h-2 w-2 rounded-full bg-brand-gold group-hover:scale-150 transition-transform" />
+                        <span className="text-sm font-bold text-brand-blue/40 tracking-widest uppercase">FON raspored</span>
+                    </Link>
+                    <h1 className="text-5xl font-serif font-bold text-brand-blue mb-4">Prijavi se</h1>
+                    <p className="text-brand-blue/50 font-medium">Unesite svoje podatke za pristup portalu.</p>
+                </div>
+
+                <div className="glass-morphism border border-brand-blue/10 rounded-[2.5rem] p-10 shadow-2xl shadow-brand-blue/5 bg-white/40">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {isRegistered && !error && (
+                            <div className="p-4 rounded-2xl bg-green-50 border border-green-100 text-green-600 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+                                Uspešno ste se registrovali! Prijavite se sada.
+                            </div>
+                        )}
+                        {error && (
+                            <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+                                {error}
+                            </div>
+                        )}
+
+                        <div>
+                            <label className="block text-[10px] font-bold text-brand-blue/40 uppercase tracking-widest mb-2 ml-1">Korisničko ime</label>
+                            <input
+                                type="text"
+                                required
+                                className="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 bg-white/50 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-medium text-brand-blue placeholder:text-brand-blue/20"
+                                placeholder="Unesite korisničko ime"
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-bold text-brand-blue/40 uppercase tracking-widest mb-2 ml-1">Lozinka</label>
+                            <input
+                                type="password"
+                                required
+                                className="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 bg-white/50 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-medium text-brand-blue placeholder:text-brand-blue/20"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            className="w-full py-4 rounded-2xl bg-brand-blue text-white font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+                            disabled={loading}
+                        >
+                            {loading ? "Prijava..." : "Pristupite portalu"}
+                        </Button>
+                    </form>
+
+                    <div className="mt-8 text-center pt-8 border-t border-brand-blue/5">
+                        <p className="text-sm text-brand-blue/40 font-medium">
+                            Nemate nalog?{" "}
+                            <Link href="/register" className="text-brand-gold font-bold hover:underline decoration-2 underline-offset-4">
+                                Registrujte se ovde
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6" />}>
+            <LoginContent />
+        </Suspense>
+    );
+}

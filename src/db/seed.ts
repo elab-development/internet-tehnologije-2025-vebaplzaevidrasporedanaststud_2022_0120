@@ -6,102 +6,142 @@ import bcrypt from "bcrypt";
 async function main() {
     console.log("Seeding database...");
 
-    //  Password hash
+    // Password hashes
     const hashedPass = await bcrypt.hash("123", 10);
-
+    const adminPass = await bcrypt.hash("admin123", 10);
 
     // Users
     const userData = await db.insert(schema.users).values([
         {
-            username: "lazar",
-            email: "lazar",
-            passwordHash: hashedPass,
+            username: "admin_lazar",
+            email: "admin@fon.bg.ac.rs",
+            passwordHash: adminPass,
             role: "ADMIN",
             firstName: "Lazar",
-            lastName: "Nikolic"
+            lastName: "Lazić"
         },
         {
-            username: "marko",
-            email: "marko",
+            username: "student_marko",
+            email: "marko@fon.bg.ac.rs",
             passwordHash: hashedPass,
             role: "STUDENT",
             firstName: "Marko",
             lastName: "Marković"
+        },
+        {
+            username: "student_jovan",
+            email: "jovan@fon.bg.ac.rs",
+            passwordHash: hashedPass,
+            role: "STUDENT",
+            firstName: "Jovan",
+            lastName: "Jovanović"
+        },
+        {
+            username: "student_ana",
+            email: "ana@fon.bg.ac.rs",
+            passwordHash: hashedPass,
+            role: "STUDENT",
+            firstName: "Ana",
+            lastName: "Anić"
+        },
+        {
+            username: "student_maja",
+            email: "maja@fon.bg.ac.rs",
+            passwordHash: hashedPass,
+            role: "STUDENT",
+            firstName: "Maja",
+            lastName: "Majić"
+        },
+        {
+            username: "student_petar",
+            email: "petar@fon.bg.ac.rs",
+            passwordHash: hashedPass,
+            role: "STUDENT",
+            firstName: "Petar",
+            lastName: "Petrović"
         }
     ]).onConflictDoNothing().returning();
 
-    const adminId = userData.find(u => u.role === "ADMIN")?.id;
-    const studentId = userData.find(u => u.role === "STUDENT")?.id;
+    //Student Groups (16 groups: A1-D4)
+    const studyPrograms = ["Informacioni sistemi", "Menadzment"] as const;
+    const yearLetters = ["A", "B", "C", "D"];
+    const groupEntries: any[] = [];
+    let groupIdCounter = 1;
 
-    // Student Groups
-    const groups = await db.insert(schema.studentGroups).values([
-        { id: 1, name: "A1", studyProgram: "Informacioni sistemi", yearOfStudy: 1, prezimeOd: "A", prezimeDo: "G" },
-        { id: 2, name: "A2", studyProgram: "Informacioni sistemi", yearOfStudy: 1, prezimeOd: "H", prezimeDo: "N" },
-        { id: 3, name: "A3", studyProgram: "Informacioni sistemi", yearOfStudy: 1, prezimeOd: "O", prezimeDo: "Z" },
-    ]).onConflictDoNothing().returning();
+    for (let yearIdx = 0; yearIdx < 4; yearIdx++) {
+        const year = yearIdx + 1;
+        const letter = yearLetters[yearIdx];
 
-    // Students 
-    if (studentId) {
-        await db.insert(schema.students).values({
-            userId: studentId,
-            indexNumber: "2022/0120",
-            studyProgram: "Informacioni sistemi",
-            yearOfStudy: 1,
-            groupId: 1
-        }).onConflictDoNothing();
+        let subCounter = 1;
+        for (const sp of studyPrograms) {
+            for (let half = 1; half <= 2; half++) {
+                groupEntries.push({
+                    id: groupIdCounter++,
+                    name: `${letter}${subCounter++}`,
+                    studyProgram: sp,
+                    yearOfStudy: year,
+                    alphabetHalf: half
+                });
+            }
+        }
+    }
+
+    await db.insert(schema.studentGroups).values(groupEntries).onConflictDoNothing();
+    console.log(`Inserted ${groupEntries.length} student groups (A1-D4).`);
+
+    // Students tabela
+    const studentsToSeed = [
+        { username: "student_marko", index: "2022/0120", sp: "Informacioni sistemi", year: 1, group: 2 }, // A2 (IS, H2 - Marković)
+        { username: "student_jovan", index: "2022/0500", sp: "Informacioni sistemi", year: 2, group: 5 }, // B1 (IS, H1 - Jovanović)
+        { username: "student_ana", index: "2021/0001", sp: "Menadzment", year: 3, group: 11 },           // C3 (MEN, H1 - Anić)
+        { username: "student_maja", index: "2020/0042", sp: "Menadzment", year: 4, group: 15 },           // D3 (MEN, H1 - Majić)
+        { username: "student_petar", index: "2021/0240", sp: "Informacioni sistemi", year: 3, group: 10 } // C2 (IS, H2 - Petrović)
+    ];
+
+    const studentDetails = [];
+    for (const s of studentsToSeed) {
+        const user = userData.find(u => u.username === s.username);
+        if (user) {
+            studentDetails.push({
+                userId: user.id,
+                indexNumber: s.index,
+                studyProgram: s.sp as any,
+                yearOfStudy: s.year,
+                groupId: s.group
+            });
+        }
+    }
+
+    if (studentDetails.length > 0) {
+        await db.insert(schema.students).values(studentDetails).onConflictDoNothing();
+        console.log(`Inserted student details for ${studentDetails.length} students.`);
     }
 
     // Cabinets
-    const cabinetsData = await db.insert(schema.cabinets).values([
+    await db.insert(schema.cabinets).values([
         { id: 1, number: "001", capacity: 30, type: "LABORATORIJSKI" },
         { id: 2, number: "101", capacity: 60, type: "AUDITORNI" },
         { id: 3, number: "Amfiteatar 1", capacity: 200, type: "AMFITEATAR" },
-    ]).onConflictDoNothing().returning();
+    ]).onConflictDoNothing();
 
     // Subjects
-    const subjectsData = await db.insert(schema.subjects).values([
+    await db.insert(schema.subjects).values([
         { id: 1, title: "Internet tehnologije", espb: 6, description: "Next.js" },
         { id: 2, title: "Baze podataka", espb: 6, description: "SQL" },
         { id: 3, title: "Programiranje 1", espb: 6, description: "Java" },
-    ]).onConflictDoNothing().returning();
-
-    // Terms
-    await db.insert(schema.terms).values([
-        {
-            id: 1,
-            dayOfWeek: "PONEDELJAK",
-            startTime: "08:15:00",
-            endTime: "10:00:00",
-            type: "PREDAVANJE",
-            subjectId: 1,
-            cabinetId: 3,
-            groupId: 1
-        },
-        {
-            id: 2,
-            dayOfWeek: "UTORAK",
-            startTime: "12:15:00",
-            endTime: "14:00:00",
-            type: "VEZBE",
-            subjectId: 2,
-            cabinetId: 1,
-            groupId: 1
-        }
     ]).onConflictDoNothing();
 
     // Holiday Calendar
-    const calendar = await db.insert(schema.holidayCalendar).values({
+    await db.insert(schema.holidayCalendar).values({
         id: 1,
         name: "Akademska godina 2024/25",
         academicYear: "2024/2025"
-    }).onConflictDoNothing().returning();
+    }).onConflictDoNothing();
 
-    if (calendar.length > 0) {
-        await db.insert(schema.holidays).values([
-            { id: 1, date: "2025-01-07", type: "NERADNI_DAN", calendarId: 1 },
-            { id: 2, date: "2025-02-15", type: "NERADNI_DAN", calendarId: 1 }
-        ]).onConflictDoNothing();
-    }
+    await db.insert(schema.holidays).values([
+        { id: 1, date: "2025-01-07", type: "NERADNI_DAN", calendarId: 1 },
+        { id: 2, date: "2025-02-15", type: "NERADNI_DAN", calendarId: 1 }
+    ]).onConflictDoNothing();
 
     console.log("Seeding finished.");
 }

@@ -19,6 +19,7 @@ export const sessionTypeEnum = pgEnum("session_type", ["PREDAVANJE", "VEZBE"]);
 export const cabinetTypeEnum = pgEnum("cabinet_type", ["LABORATORIJSKI", "AUDITORNI", "AMFITEATAR"]);
 export const dayOfWeekEnum = pgEnum("day_of_week", ["PONEDELJAK", "UTORAK", "SREDA", "CETVRTAK", "PETAK", "SUBOTA", "NEDELJA"]);
 export const holidayTypeEnum = pgEnum("holiday_type", ["KOLOKVIJUMSKA_NEDELJA", "ISPITNI_ROK", "BEZ_AKTIVNOSTI", "NERADNI_DAN"]);
+export const studyProgramEnum = pgEnum("study_program", ["Informacioni sistemi", "Menadzment"]);
 
 // -- TABLES --
 
@@ -38,7 +39,7 @@ export const users = pgTable("users", {
 export const students = pgTable("students", {
     userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: 'cascade' }),
     indexNumber: varchar("index_number", { length: 15 }).notNull().unique(),
-    studyProgram: text("study_program").notNull(),
+    studyProgram: studyProgramEnum("study_program").notNull(),
     yearOfStudy: integer("year_of_study").notNull(),
     pictureUrl: text("picture_url"),
     groupId: integer("group_id").references(() => studentGroups.id),
@@ -48,10 +49,9 @@ export const students = pgTable("students", {
 export const studentGroups = pgTable("student_groups", {
     id: integer("id").primaryKey(), // Using integer as per diagram PK
     name: text("name").notNull(),
-    studyProgram: text("study_program").notNull(),
+    studyProgram: studyProgramEnum("study_program").notNull(),
     yearOfStudy: integer("year_of_study").notNull(),
-    prezimeOd: varchar("prezime_od", { length: 1 }).notNull(),
-    prezimeDo: varchar("prezime_do", { length: 1 }).notNull(),
+    alphabetHalf: integer("alphabet_half").notNull(),
 });
 
 // Subjects
