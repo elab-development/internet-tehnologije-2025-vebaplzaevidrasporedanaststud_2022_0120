@@ -1,0 +1,654 @@
+
+ 
+1.	1. Korisnički zahtev
+1.1. Verbalni opis za izabranu temu
+Tema: Veb aplikacija za evidenciju rasporeda nastave studenata
+Uvod i motivacija
+Na fakultetima i visokim školama čest je problem neusklađenosti informacija o rasporedu nastave. Studenti često moraju ručno da pretražuju različite izvore kako bi pronašli tačan termin predavanja, promena se slabo komunicira, a katedre nemaju centralizovan alat za ažuriranje informacija.
+Ovakva situacija utiče na organizaciju studenata i može dovesti do kašnjenja ili propuštanja nastave.
+Ciljevi aplikacije
+Cilj aplikacije je da omogući:
+•	Centralizovan pregled rasporeda po smerovima i godinama studija.
+•	Jednostavno i brzo ažuriranje rasporeda od strane administratora.
+•	Studenata da u realnom vremenu pristupe ažurnim informacijama o terminima nastave, administratorima, učionicama i eventualnim izmenama.
+•	Smanjenje grešaka i bolju organizaciju nastavnog procesa.
+Ciljna grupa korisnika su studenti FON-a.
+Aplikaciju koriste tri grupe korisnika:
+1.	Studenti – pristupaju rasporedu, pregledaju izmene i prate aktuelne termine.
+2.	Administratori – unose, menjaju i brišu termine nastave za sve studijske programe i godine.
+3.	Neulogovani korisnici – prikaz osnovnih informacija o FON-u.
+ 
+
+Sažet pregled funkcionalnosti
+Aplikacija omogućava:
+•	pregled rasporeda po smeru, godini i grupi,
+•	pregled osnovnih informacija o FON-u,
+•	pregled detalja termina (predmet, administrator, učionica, vreme),
+•	administrativno upravljanje rasporedom (CRUD operacije),
+•	filtriranje i pretragu termina,
+•	prijavu i autentifikaciju korisnika.
+
+1.2. Funkcionalni zahtevi
+1.	Registracija studenta
+o	Student unosi podatke, pa na osnovu prezimena i godine dobije grupu za slušanje nastave (A2,C4,D1..), kreira se novi nalog.
+2.	Prijava korisnika
+o	Neulogovani korisnik unosi kredencijale, onda ako su ispravni, dobija rolu admina, za koju mu se prikazuje interfejs za admina, ili dobija rolu studenta i prikazuje mu se interfejs studenta. Nakon ovoga ostaje ulogovan i to potvrđuje JWT tokenom koji dobija.
+3.	Pregled osnovnih informacija o fakultetu
+o	Neulogovani korisnik može da vidi osnovne informacije o predmetima i kabinetima
+4.	Pregled rasporeda
+o	Student može da pregleda raspored po godini i prezimenu, odnosno grupi za slušanje.
+o	Aplikacija prikazuje nedeljni ili dnevni raspored.
+ 
+5.	Pregled informacija o predmetu
+o	Klikom na termin student dobija detalje o predmetu, vremenu odrzavanja nastave,tip nastave(P ili V)  i učionici.
+6.	Administratorsko upravljanje rasporedom
+o	Administrator može da kreira, izmeni ili obriše termin nastave.
+o	Sistem validira da se termini ne preklapaju (učionica, grupa).
+7.	Integracija sa goodle kalendarom
+o	Sistem treba da obezbedi mogućnost studentu da svoj raspored nastave automatski sinhronizuje sa Google Kalendarom. Nakon što student da saglasnost i izvrši prijavu putem svog Google naloga, sve aktivnosti iz rasporeda nastave biće ubačene kao događaji u njegov Google kalendar.
+8.	Evidentiranje na nastavu studenta
+o	Student može da se prijavi putem dugmeta da oznaci da prisustvuje na casu ukoliko postoji termin .
+9.	Dodavanje neradnih dana
+o	Sistem omogućava administratoru da u aplikaciju unese neradne dane (državni praznici, fakultetski neradni dani, dani bez nastave). Nakon dodavanja, sistem automatski prilagođava raspored tako što uklanja održavanje nastave u tim terminima i obaveštava korisnike o promeni.Pregled statistike
+10.	Pregled statistike
+o	Sistem omogućava administratoru pregled statističkih podataka o upotrebi aplikacije, aktivnostima korisnika i rasporedu nastave. Statistika pomaže u evaluaciji rada sistema, otkrivanju opterećenja i eventualnih problema u organizaciji nastave.
+
+ 
+1.3. Nefunkcionalni zahtevi
+Performanse
+•	Sistem mora odgovoriti na korisnički zahtev u proseku do 2 sekunde.
+•	Aplikacija mora podržati najmanje 500 istovremenih korisnika.
+Bezbednost
+•	Autentifikacija putem zaštićenog tokena.
+•	Lozinke se čuvaju hešovane i enkriptovane.
+•	Administrator ima poseban nivo pristupa koji je dodatno zaštićen.
+Pouzdanost i dostupnost
+•	Aplikacija mora biti dostupna minimum 99% vremena.
+•	Automatski backup baze na dnevnom nivou.
+Upotrebljivost
+•	Interfejs mora biti jednostavan i prilagođen mobilnim ekranima.
+•	Podržan je prikaz na srpskom i engleskom jeziku.
+Održavanje i skalabilnost
+•	Sistem mora omogućiti modularno dodavanje novih smerova.
+•	Kod treba biti dokumentovan i organizovan prema standardnim MVC principima.
+Portabilnost
+•	Aplikacija radi u svim modernim browserima: Chrome, Edge, Firefox, Safari.
+•	Responsivan dizajn omogućava rad na mobilnim uređajima.
+ 
+1.4. Uloge nad sistemom i permisije
+Tabela uloga i permisija
+Uloga	Dozvoljene funkcije	Ograničenja	Prava pristupa podacima
+Student	Pregled rasporeda, pregled izmena, preuzimanje PDF-a,registracija,integracija sa google calendarom.	Ne može menjati raspored	Pristup rasporedima 
+i svojim
+podacima
+Admin	Prikaz, unos, izmena, brisanje termina, prikaz predmeta, pregled svih grupa,dodavanje neradnih dana,pregled statistike, prikaz kabineta	Ne može koristiti studentske funkcije	Potpuni pristup svim podacima u sistemu
+Neulogovani 
+korisnik	Pregled predmeta i kabineta	Nema pristup create,update,delete operacijama nad podacima u sistemu, ni čitanju svojih podacima	Pristup podacima koji su svima dostupni
+2.	Opis sistema
+2.1.	Opis slučajeva korišćenja (Use Case opis)
+ 
+dijagram slučajeva korišćenja za admina
+ 
+dijagram slučaja korišćenja za studenta 
+ 
+dijagram slučajeva korišćenja za neulogovanog korisnika
+ 
+SK1 - Prijavi studentа
+Naziv SK
+Prijavi studenta
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs i sistem 
+Preduslovi
+Korisnički interfejs i sistem su pokrenuti. Student poseduje nalog i email i lozinku vezane za taj nalog. Korisnički interfejs prikazuje formu za prijavljivanje.  
+Osnovni scenario SK
+1.	Student unosi email i lozinku. (APUSO)
+2.	Student kontroliše da li je ispravno uneo podatke. (ANSO)
+3.	Student poziva sistem da proveri kredencijale. (APSO)
+4.	Sistem proverava email i lozinku u bazi. (SO)
+5.	Sistem prijavljuje studenta i prikazuje poruku: “Korisničko ime i lozinka su ispravni.” (IA)
+6.	Korisnički interfejs otvara glavnu formu / korisnički dashboard za studenta. (KIPGFM)
+Alternativna scenarija
+5.1 Ako su kredencijali neispravni, sistem prikazuje poruku: “Email ili lozinka nisu ispravni.” Izvršenje se prekida. (IA)
+6.1 Ako nije moguće otvoriti dashboard, korisnički interfejs prikazuje poruku: “Ne može da se otvori glavna forma.” (NPGFM)
+Postuslovi
+Student je prijavljen i vidi svoj dashboard.
+ 
+SK2 - Prijavi admina
+Naziv SK
+Prijavi admina
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs i sistem
+Preduslovi
+Korisnički interfejs i sistem su pokrenuti. Admin poseduje nalog i email i lozinku vezane za taj nalog. Korisnički interfejs prikazuje formu za prijavljivanje.  
+Osnovni scenario SK
+1.	Admin unosi email i lozinku. (APUSO)
+2.	Admin kontroliše tačnost unešenih podataka. (ANSO)
+3.	Admin poziva sistem da verifikuje kredencijale. (APSO)
+4.	Sistem proverava kredencijale i ulogu korisnika. (SO)
+5.	Sistem prihvata prijavu i prikazuje poruku: “Email i lozinka su ispravni.” (IA)
+6.	Korisnički interfejs otvara admin panel (CRUD operacije za termine, kabinete, predmete, grupe...). (KIPGFM)
+Alternativna scenarija
+5.1 Ako kredencijali nisu ispravni ili korisnik nema admin prava, sistem prikazuje poruku: “Prijava neuspešna, nemate administrativna prava ili su kredencijali netačni.” (IA)
+6.1 Ako admin panel ne može da se otvori, interfejs prikazuje poruku: “Ne može da se otvori admin panel.” (NPGFM)
+Postuslovi
+Admin je prijavljen i vidi admin panel.
+ 
+SK3 - Prikaz rasporeda
+Naziv SK
+Prikaz rasporeda 
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Student pripada jednoj StudentskojGrupi. Postoji kreiran Raspored povezan sa tom grupom. Korisnički interfejs prikazuje glavnu formu za studenta.  
+Osnovni scenario SK
+1.	Student bira opciju “Prikaži raspored” u interfejsu. (APUSO)
+2.	Interfejs šalje zahtev sistemu za raspored studenta (po grupi). (APSO)
+3.	Sistem vraća raspored koji je vezan za studentsku grupu studenta. (SO)
+4.	Sistem prikazuje studentu raspored i poruku: “Raspored je prikazan.” (IA)
+Alternativna scenarija
+3.1 Ako ne postoji raspored za grupu, sistem prikazuje poruku: “Raspored nije pronađen za vašu grupu.” (ИА)
+4.1 Ako dođe do greške pri dohvatanju podataka, sistem prikazuje poruku: “Greška prilikom učitavanja rasporeda.” (ИА)
+Postuslovi
+Student vidi svoj aktuelni raspored 
+ 
+SK4 - Evidencija prisustva studenta
+Naziv SK
+Evidencija prisustva studenta
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Postoji Termin koji je trenutno u toku i koji se odnosi na StudentskuGrupu studenta. Korisnički interfejs prikazuje glavnu formu za studenta.
+Osnovni scenario SK
+1.	Student pritisne dugme “Evidentiraj prisustvo”. (APUSO)
+2.	Interfejs prikazuje aktivni termin koji je trenutno u toku za njegovu grupu. (IA)
+3.	Student potvrđuje evidenciju prisustva. (APUSO)
+4.	Interfejs šalje zahtev sistemu da evidentira prisustvo. (APSO)
+5.	Sistem validira da je termin zaista u toku i da student pripada grupi; zatim kreira entitet Prisustvo sa statusom PRISUTAN. (SO)
+6.	Sistem vraća poruku: “Prisustvo je evidentirano.” i prikazuje ažurirano stanje. (IA)
+Alternativna scenarija
+2.1 Ako nema termina u toku za grupu, sistem prikazuje poruku: “Nema termina u toku za vašu grupu.” Izvršenje se prekida. (IA)
+5.1 Ako student pokušava da se evidentira van dozvoljenog vremenskog prozora, sistem prikazuje poruku: “Nije moguće evidentirati prisustvo, termin nije u toku.” (IA)
+5.2 Ako sistem ne može da upiše prisustvo, prikazuje poruku: “Sistem ne može da zapamti prisustvo.” (IA)
+Postuslovi
+Prisustvo za studenta na tom terminu je zabeleženo.
+ 
+SK5 - Preuzimanje kalendara studenta
+Naziv SK
+Preuzimanje kalendara studenta
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Postoji Raspored za grupu studenta i postoji KalendarNeradnihDana za odgovarajuću akademsku godinu. Korisnički interfejs prikazuje glavnu formu za studenta.
+Osnovni scenario SK
+1.	Student bira opciju “Preuzmi kalendar”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za generisanje. (APSO)
+3.	Sistem kombinuje Termini iz Rasporeda studenta sa NeradnimDanima iz KalendarNeradnihDana i pravi jedinstvenu listu događaja. Sistem generiše fajl u pdf formatu i vraća ga klijentu. (SO)
+4.	Interfejs omogućava studentu da preuzme fajl i prikazuje poruku: “Kalendar je spreman za preuzimanje.” (IA)
+Alternativna scenarija
+3.1 Ako ne postoji raspored ili kalendar neradnih dana, sistem prikazuje poruku: “Nije moguće generisati calendar, nedostaju podaci.” (IA)
+4.1 Ako nije moguće generisati fajl, sistem prikazuje poruku: “Greška pri generisanju kalendara.” (IA)
+Postuslovi
+Student preuzima fajl koji sadrži termine i neradne dane; 
+ 
+SK6 - Unos termina 
+Naziv SK
+Unos termina
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Postoje StudentskaGrupa, Kabinet i Predmet koji mogu biti dodeljeni terminu. Korisnički interfejs prikazuje glavnu formu za admina.
+Osnovni scenario SK
+1.	Admin otvara formu za unos termina. (APUSO)
+2.	Admin unosi podatke: dan, početak i kraj, tip nastave, predmet, kabinet, ciljna StudentskaGrupa. (APUSO)
+3.	Admin poziva sistem da validira i sačuva termin. (APSO)
+4.	Sistem čuva termin. (SO)
+5.	Sistem vraća poruku: “Sistem je zapamtio termin.” (IA)
+Alternativna scenarija
+4.1 Ako postoji konflikt (kabinet ili grupa zauzeti), sistem prikazuje poruku: “Konflikt, kabinet/grupa zauzeti u zadanom terminu.” Admin može pokušati drugi termin ili prepraviti podatke. (IA)
+5.1 Ako sistem ne može da zapamti termin, prikazuje poruku: “Sistem ne može da zapamti termin.” (IA)
+Postuslovi
+Termin je dodat u Raspored.
+ 
+SK7 – Izmena termina
+Naziv SK
+Izmena termina
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Postoji bar jedan Termin u sistemu. Korisnički interfejs prikazuje admin panel sa listom termina.
+Osnovni scenario SK
+1.	Admin bira termin koji želi da izmeni. (APUSO)
+2.	Korisnički interfejs prikazuje formu za izmenu termina sa postojećim podacima. (IA)
+3.	Admin menja željene podatke termina. (APUSO)
+4.	Admin potvrđuje izmenu termina. (APSO)
+5.	Sistem validira nove podatke i ažurira termin u bazi. (SO)
+6.	Sistem prikazuje poruku: „Termin je uspešno izmenjen.” (IA)
+Alternativna scenarija
+5.1 Ako postoji konflikt (kabinet zauzet), sistem prikazuje poruku: „Izmena nije moguća zbog konflikta termina.” (IA)
+6.1 Ako sistem ne može da zapamti izmene, prikazuje poruku: „Sistem ne može da izmeni termin.” (IA)
+Postuslovi
+Podaci o terminu su ažurirani u sistemu.
+
+ 
+SK8 – Brisanje termina
+Naziv SK
+Brisanje termina
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Postoji Termin u sistemu. Korisnički interfejs prikazuje admin panel sa listom termina.
+Osnovni scenario SK
+1.	Admin bira termin za brisanje. (APUSO)
+2.	Korisnički interfejs prikazuje zahtev za potvrdu brisanja. (IA)
+3.	Admin potvrđuje brisanje termina. (APSO)
+4.	Sistem briše termin iz baze. (SO)
+5.	Sistem prikazuje poruku: „Termin je obrisan.” (IA)
+Alternativna scenarija
+4.1 Ako sistem ne može da obriše termin, prikazuje poruku: „Sistem ne može da obriše termin.” (IA)
+Postuslovi
+Termin više ne postoji u sistemu.
+ 
+SK9 – Dodavanje neradnih dana
+Naziv SK
+Dodavanje neradnih dana
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Postoji KalendarNeradnihDana za akademsku godinu. Korisnički interfejs prikazuje formu za upravljanje neradnim danima.
+Osnovni scenario SK
+1.	Admin bira opciju za dodavanje neradnog dana. (APUSO)
+2.	Admin unosi datum i opis neradnog dana. (APUSO)
+3.	Admin potvrđuje unos. (APSO)
+4.	Sistem proverava da li datum već postoji u kalendaru i dodaje neradni dan. (SO)
+5.	Sistem prikazuje poruku: „Neradni dan je dodat.” (IA)
+Alternativna scenarija
+4.1 Ako neradni dan već postoji, sistem prikazuje poruku: „Neradni dan je već evidentiran.” (IA)
+5.1 Ako sistem ne može da sačuva podatke, prikazuje poruku: „Sistem ne može da zapamti neradni dan.” (IA)
+Postuslovi
+Neradni dan je evidentiran u kalendaru.
+ 
+SK10 – Prikaz kabineta
+Naziv SK
+Prikaz kabineta
+Aktori SK
+Admin, Neulogovani korisnik
+Učesnici SK
+Korisnik, korisnički interfejs, sistem
+Preduslovi
+Korisnički interfejs je pokrenut i prikazuje početnu ili admin formu. U sistemu postoje Kabineti.
+Osnovni scenario SK
+1.	Korisnik bira opciju „Prikaz kabineta”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za listu kabineta. (APSO)
+3.	Sistem vraća sve kabinete iz baze. (SO)
+4.	Sistem prikazuje listu kabineta korisniku. (IA)
+Alternativna scenarija
+3.1 Ako ne postoji nijedan kabinet, sistem prikazuje poruku: „Nema dostupnih kabineta.” (IA)
+Postuslovi
+Korisnik vidi listu kabineta.
+ 
+SK11 – Prikaz predmeta
+Naziv SK
+Prikaz predmeta
+Aktori SK
+Admin, Neulogovani korisnik
+Učesnici SK
+Korisnik, korisnički interfejs, sistem
+Preduslovi
+Korisnički interfejs je pokrenut i prikazuje početnu stranicu sa osnovnim informacijama o fakultetu ili admin formu za dodavanje termina. U sistemu postoje Predmeti.
+Osnovni scenario SK
+1.	Korisnik bira opciju „Prikaz predmeta”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za listu predmeta. (APSO)
+3.	Sistem vraća sve predmete iz baze. (SO)
+4.	Sistem prikazuje listu predmeta korisniku. (IA)
+Alternativna scenarija
+3.1 Ako nema predmeta u sistemu, sistem prikazuje poruku: „Nema definisanih predmeta.” (IA)
+Postuslovi
+Korisnik vidi listu predmeta. Ako je admin, onda može da selektuje jedan.
+ 
+SK12 – Prikaz grupa studenata
+Naziv SK
+Prikaz grupa studenata
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Korisnički interfejs prikazuje admin formu za dodavanje termina.
+Osnovni scenario SK
+1.	Interfejs šalje zahtev sistemu za grupe studenata. (APSO)
+2.	Sistem vraća sve studentske grupe. (SO)
+3.	Sistem prikazuje grupe adminu. (IA)
+Alternativna scenarija
+3.1 Ako ne postoji nijedna grupa, sistem prikazuje poruku: „Nema definisanih studentskih grupa.” (IA)
+Postuslovi
+Admin vidi listu studentskih grupa i može da selektuje jednu.
+
+ 
+SK13 – Prikaz statistike
+Naziv SK
+Prikaz statistike
+Aktori SK
+Admin
+Učesnici SK
+Admin, korisnički interfejs, sistem
+Preduslovi
+Admin je prijavljen. Postoje podaci o terminima i prisustvima. Korisnički interfejs prikazuje admin panel.
+Osnovni scenario SK
+1.	Admin bira opciju „Prikaz statistike”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za statističke podatke. (APSO)
+3.	Sistem obrađuje podatke o terminima i prisustvima. (SO)
+4.	Sistem prikazuje statistiku adminu. (IA)
+Alternativna scenarija
+3.1 Ako nema dovoljno podataka, sistem prikazuje poruku: „Nema dovoljno podataka za statistiku.” (IA)
+Postuslovi
+Admin vidi statističke izveštaje.
+
+ 
+SK14 – Odjava sa sistema
+Naziv SK
+Odjava sa sistema
+Aktori SK
+Student, Admin
+Učesnici SK
+Korisnik, korisnički interfejs, sistem
+Preduslovi
+Korisnik je prijavljen. Korisnički interfejs prikazuje glavnu formu korisnika.
+Osnovni scenario SK
+1.	Korisnik bira opciju „Odjava”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za odjavu. (APSO)
+3.	Sistem invalidira sesiju korisnika. (SO)
+4.	Sistem prikazuje poruku: „Uspešno ste se odjavili.” i vraća početnu formu. (IA)
+Postuslovi
+Korisnik je odjavljen sa sistema.
+ 
+SK15 – Registracija studenta
+Naziv SK
+Registracija studenta
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Korisnički interfejs i sistem su pokrenuti. Korisnički interfejs prikazuje formu za registraciju studenta.
+Osnovni scenario SK
+1.	Student unosi podatke za registraciju. (APUSO)
+2.	Student proverava ispravnost unetih podataka. (ANSO)
+3.	Student potvrđuje registraciju. (APSO)
+4.	Sistem validira podatke i proverava da li email već postoji u sistemu i kreira novi nalog studenta. (SO)
+5.	Sistem prikazuje poruku: „Registracija je uspešna.” (IA)
+6.	Korisnički interfejs prikazuje formu za prijavu. (KIPGFM)
+Alternativna scenarija
+4.1 Ako email već postoji, sistem prikazuje poruku: „Korisnik sa tim email-om već postoji.” (IA)
+5.1 Ako sistem ne može da kreira nalog, prikazuje poruku: „Sistem ne može da registruje studenta.” (IA)
+Postuslovi
+Student ima kreiran nalog u sistemu.
+ 
+SK16 – Prikaz svojih informacija
+Naziv SK
+Prikaz svojih informacija
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Korisnički interfejs prikazuje glavnu formu za studenta.
+Osnovni scenario SK
+1.	Student bira opciju „Prikaz mojih informacija”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za podatke o studentu. (APSO)
+3.	Sistem vraća podatke o studentu iz baze. (SO)
+4.	Sistem prikazuje podatke studentu. (IA)
+Alternativna scenarija
+3.1 Ako podaci ne mogu da se dohvate, sistem prikazuje poruku: „Greška pri učitavanju podataka.” (IA)
+Postuslovi
+Student vidi svoje lične podatke.
+
+ 
+SK17 – Izmena svojih informacija
+Naziv SK
+Izmena svojih informacija
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Korisnički interfejs prikazuje formu sa podacima o studentu.
+Osnovni scenario SK
+1.	Student bira opciju „Izmeni informacije”. (APUSO)
+2.	Korisnički interfejs prikazuje formu za izmenu podataka. (IA)
+3.	Student menja dozvoljena polja. (APUSO)
+4.	Student potvrđuje izmene. (APSO)
+5.	Sistem validira nove podatke i ažurira ih u bazi. (SO)
+6.	Sistem prikazuje poruku: „Podaci su uspešno izmenjeni.” (IA)
+Alternativna scenarija
+5.1 Ako validacija ne uspe, sistem prikazuje poruku: „Uneti podaci nisu validni.” (IA)
+6.1 Ako sistem ne može da zapamti izmene, prikazuje poruku: „Sistem ne može da izmeni podatke.” (IA)
+Postuslovi
+Podaci o studentu su ažurirani.
+ 
+SK18 – Prikaz termina u toku
+Naziv SK
+Prikaz termina u toku
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem
+Preduslovi
+Student je prijavljen. Student pripada studentskoj grupi. Korisnički interfejs prikazuje glavnu formu za studenta.
+Osnovni scenario SK
+1.	Student bira opciju „Prikaz termina u toku”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za aktivni termin grupe. (APSO)
+3.	Sistem proverava da li postoji termin u toku za studentsku grupu. (SO)
+4.	Sistem prikazuje podatke o terminu. (IA)
+Alternativna scenarija
+3.1 Ako ne postoji termin u toku, sistem prikazuje poruku: „Trenutno nema aktivnih termina.” (IA)
+Postuslovi
+Student vidi informaciju o aktivnom terminu ili poruku da ne postoji.
+ 
+SK19 – Povezivanje sa Google kalendarom
+Naziv SK
+Povezivanje sa Google kalendarom
+Aktori SK
+Student
+Učesnici SK
+Student, korisnički interfejs, sistem, Google Calendar servis
+Preduslovi
+Student je prijavljen. Postoji raspored za studentsku grupu. Korisnički interfejs prikazuje glavnu formu za studenta.
+Osnovni scenario SK
+1.	Student bira opciju „Poveži sa Google kalendarom”. (APUSO)
+2.	Interfejs šalje zahtev sistemu za sinhronizaciju. (APSO)
+3.	Sistem šalje termine ka Google Calendar servisu. (SO)
+4.	Sistem prikazuje poruku: „Kalendar je uspešno sinhronizovan.” (IA)
+Alternativna scenarija
+3.1 Ako dođe do greške u komunikaciji sa Google servisom, sistem prikazuje poruku: „Sinhronizacija sa Google kalendarom nije uspela.” (IA)
+Postuslovi
+Termini studenta su povezani sa Google kalendarom.
+
+ 
+2.2.	Arhitektura aplikacije
+1. Frontend (klijentska aplikacija)
+•	Web aplikacija Next.js/React Frameworka koja se izvršava u browseru korisnika.
+•	Zadužena je za prikaz korisničkog interfejsa, uključujući:
+o	formu za prijavu i registraciju,
+o	stranicu za pregled rasporeda nastave,
+o	prikaz termina za check-in,
+o	prikaz i uređivanje profila studenta,
+o	pregled statusa i potvrda prijava.
+•	Komunicira sa backendom isključivo putem REST API poziva (HTTP, JSON).
+•	Ne obrađuje poslovnu logiku - samo prikazuje podatke koje dobija od servera.
+2. Backend (serverska aplikacija)
+•	Implementiran u okviru Next.js Route Handlers tehnologije, koja omogućava da Next.js aplikacija sadrži i backend sloj.
+•	Zadužen je za poslovnu logiku sistema, uključujući:
+o	autentikaciju i autorizaciju studenata,
+o	obradu prijave korisnika na nalog (login/registracija),
+o	dohvat rasporeda sa baze,
+o	prikaz i upravljanje terminima,
+o	obradu i evidentiranje check-in prijava,
+o	administrativne validacije i pravila sistema.
+•	Obezbeđuje REST API endpoint-e koje frontend poziva.
+•	Komunicira sa bazom podataka korišćenjem ORM-a (npr. Prisma) ili direktnih SQL upita.
+•	Server sprovodi celokupnu poslovnu logiku i validaciju  frontend samo služi kao grafički prikaz.
+ 
+3. Baza podataka
+•	PostgreSQL relaciona baza podataka u kojoj se čuvaju ključni podaci sistema:
+o	podaci o studentima,
+o	raspored nastave i termini časova,
+o	evidencija check-in prijava,
+o	podaci o statusu studenta i istoriji prijava.
+•	Backend je jedina komponenta koja direktno pristupa bazi podataka - frontend nikada ne komunicira sa bazom direktno.
+•	Baza omogućava transakcioni rad, referencijalni integritet i sigurno čuvanje podataka.
+ 
+4.Spoljašnji servisi u slučaju integracije sa Google Calendar servisom, backend aplikacija bi bila povezana sa eksternim Google API-jem radi sinhronizacije događaja. Backend bi komunicirao sa Google Calendar API-jem putem sigurnih OAuth 2.0 autorizovanih poziva i imao mogućnost:kreiranja događaja (termina) u Google kalendaru studenta,ažuriranja postojećih događaja,brisanja događaja,preuzimanja i prikaza upisanih termina iz Google kalendara.
+
+ 
+
+Arhitektura studentske platforme zasniva se na modelu u kojem je frontend jasno odvojen od backend logike i baze podataka. Korisnici pristupaju aplikaciji putem web klijenta razvijenog u Next.js okruženju. Web klijent komunicira sa backendom isključivo putem HTTP REST API poziva, pri čemu se svi podaci razmenjuju u JSON formatu.Spoljašnji servisi - arhitektura omogućava kasniju integraciju eksternih servisa (GoogleCalendar), ukoliko se ukaže potreba.
+Backend aplikacija: implementirana u okviru Next.js serverskog sloja predstavlja centralni deo sistema i zadužena je za obradu poslovne logike. Backend pristupa relacionoj bazi podataka PostgreSQL koristeći SQL upite ili ORM sloj (npr. Prisma), pri čemu izvršava operacije čitanja i upisa potrebnih informacija.
+Spoljašnji servisi: Backend bi od Google API-ja dobijao JSON odgovore i prosleđivao ih frontend sloju.Ovim se omogućava automatska sinhronizacija rasporeda i check-in termina sa Google Calendar nalogom studenta.
+Tok podataka funkcioniše tako što frontend šalje zahtev backendu kada korisnik:želi da se prijavi,pregleda raspored,proveri slobodne termine,izvrši check-in prijavu,ažurira svoje podatke. Backend obrađuje zahtev, pristupa PostgreSQL bazi podataka, izvršava tražene operacije, a zatim rezultat vraća frontend sloju koji prikazuje informacije korisniku.Ovakva podela obezbeđuje sigurnost, modularnost i lakše održavanje celokupnog sistema, uz čist razdvojeni frontend i backend sloj.
+ 
+2.3.	Opis procesa slučajeva korišćenja (Dijagrami sekvenci)
+
+DS1: Prijavi studentа
+Osnovni scenario SK
+1.	Student poziva sistem da proveri kredencijale. (APSO)
+2.	Sistem prijavljuje studenta i prikazuje poruku: “Korisničko ime i lozinka su ispravni.” (IA)
+ 
+ 
+Alternativna scenarija
+2.1 Ako su kredencijali neispravni, sistem prikazuje poruku: “Email ili lozinka nisu ispravni.” Izvršenje se prekida. (IA)
+ 
+ 
+DS2: Prijavi admin
+Osnovni scenario SK
+1.	Admin poziva sistem da verifikuje kredencijale. (APSO)
+2.	Sistem prihvata prijavu i prikazuje poruku: “Email i lozinka su ispravni.” (IA)
+ 
+Alternativna scenarija
+2.1 Ako kredencijali nisu ispravni ili korisnik nema admin prava, sistem prikazuje poruku: “Prijava neuspešna, nemate administrativna prava ili su kredencijali netačni.” (IA)
+
+
+
+
+
+
+
+DS3: Prikaz rasporeda
+Osnovni scenario SK
+1.	Interfejs šalje zahtev sistemu za raspored studenta (po grupi). (APSO)
+2.	Sistem prikazuje studentu raspored i poruku: “Raspored je prikazan.” (IA)
+
+
+
+
+ 
+Alternativna scenarija
+
+2.1 Ako dođe do greške pri dohvatanju podataka, sistem prikazuje poruku: “Greška prilikom učitavanja rasporeda.” (ИА)
+ 
+ 
+DS4: Evidencija prisustva studenta
+Osnovni scenario SK
+1.	Interfejs prikazuje aktivni termin koji je trenutno u toku za njegovu grupu. (IA)
+2.	Interfejs šalje zahtev sistemu da evidentira prisustvo. (APSO)
+3.	Sistem vraća poruku: “Prisustvo je evidentirano.” i prikazuje ažurirano stanje. (IA)
+ 
+Alternativna scenarija
+1.1 Ako nema termina u toku za grupu, sistem prikazuje poruku: “Nema termina u toku za vašu grupu.” Izvršenje se prekida. (IA)
+ 
+
+
+
+
+3.1 Ako student pokušava da se evidentira van dozvoljenog vremenskog prozora, sistem prikazuje poruku: “Nije moguće evidentirati prisustvo, termin nije u toku.” (IA)
+ 
+
+ 
+3.2 Ako sistem ne može da upiše prisustvo, prikazuje poruku: “Sistem ne može da zapamti prisustvo.” (IA)
+ 
+ 
+DS6: Unos termina
+Osnovni scenario SK
+1.	Admin poziva sistem da validira i sačuva termin. (APSO)
+2.	Sistem vraća poruku: “Sistem je zapamtio termin.” (IA)
+
+
+Alternativna scenarija
+
+2.1 Ako sistem ne može da zapamti termin, prikazuje poruku: “Sistem ne može da zapamti termin.” (ИА)
+ 
+2.4.	Model podataka –  Dijagram klasa
+
+
+ 
+3.	 Predlog tehnologija koje će biti korišćene
+U nastavku je prikazan konkretno izabran tehnološki stek za realizaciju aplikacije za raspored nastave. Izbor je napravljen na osnovu stabilnosti, jednostavnosti implementacije i dostupne dokumentacije.
+
+3.1. Frontend
+• Next.js/React framework
+Next.js je izabran kao frontend framework zbog sledećih razloga:
+•	Omogućava server-side rendering (SSR) i static site generation (SSG), što poboljšava performanse i SEO.
+•	Ima ugrađenu podršku za rute, API rute i optimizaciju resursa.
+•	Razvijen je na osnovu React-a, pa omogućava korišćenje modernog, komponentnog UI pristupa.
+•	Idealno rešenje za aplikacije koje zahtevaju brz prikaz podataka i dinamične komponente, kao što je raspored nastave.
+• Tailwind CSS
+Tailwind je izabran za stilizaciju jer:
+•	Omogućava brzo i efikasno kreiranje UI-ja bez pisanjem velikih CSS fajlova.
+•	Koristi utility-based pristup, što ubrzava razvoj i olakšava održavanje.
+•	Odličan je za responzivan dizajn i lako se integriše sa Next.js-om.
+•	Pruža visok nivo prilagodljivosti dizajna aplikacije.
+ 
+3.2. Backend
+• Next.js 
+Za backend se koristi Next.js zbog sledećih prednosti:
+•	Next.js omogućava pravljenje API ruta direktno unutar aplikacije, bez potrebe za odvojenim backend framework-om.
+•	Jednostavnija arhitektura - frontend i backend se nalaze u jednom projektu.
+•	Odlična integracija sa bazama podataka, autentikacijom i server-side logikom.
+•	Manje kompleksnosti i brže razvijanje jer se koristi isti jezik i framework (JavaScript/TypeScript) na celom projektu.
+
+3.3. Baza podataka
+PostgreSQL
+Za skladištenje podataka izabrana je PostgreSQL relaciona baza.
+Razlozi izbora:
+1.	Brz i pouzdan - PostgreSQL je stabilan i optimizovan za velike količine podataka.
+2.	Besplatan i jednostavan - lako se instalira, koristi i održava.
+3.	Široko podržan - radi sa svim popularnim backend tehnologijama i ima veliku zajednicu.
+
+3.4. Integracije
+Google Calendar API
+Aplikacija će koristiti Google Calendar API kako bi student mogao da sinhronizuje raspored nastave sa svojim Google kalendarom.
+ 
+3.5. DevOps
+Docker
+Aplikacija se pokreće u kontejnerima pomoću Dockera.
+Razlozi:
+•	Laka instalacija i pokretanje na bilo kom serveru.
+•	Stabilno development okruženje.
+Cloud deployment: Google cloud
+Za hostovanje frontend-a, backend-a i baze koristi se Google cloud.
+Razlozi:
+•	Omogućava skalabilno pokretanje aplikacija bez potrebe za sopstvenom infrastrukturom.
+•	Nudi pouzdane i brze usluge, zasnovane na istoj mreži koju koriste Gmail i YouTube.
+•	Ima naprednu podršku za kontejnere i Kubernetes (GKE).
+•	Pruža bezbednost i enkripciju podataka na visokom nivou.
+
+ 
+
+

@@ -134,7 +134,6 @@ async function main() {
     // Holiday Calendar
     await db.insert(schema.holidayCalendar).values({
         id: 1,
-        name: "Akademska godina 2024/25",
         academicYear: "2024/2025"
     }).onConflictDoNothing();
 

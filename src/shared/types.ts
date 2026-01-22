@@ -1,5 +1,4 @@
 export type Role = "ADMIN" | "STUDENT";
-export type AttendanceStatus = "PRESENT" | "ABSENT";
 export type SessionType = "PREDAVANJE" | "VEZBE";
 export type CabinetType = "LABORATORIJSKI" | "AUDITORNI" | "AMFITEATAR";
 export type DayOfWeek = "PONEDELJAK" | "UTORAK" | "SREDA" | "CETVRTAK" | "PETAK" | "SUBOTA" | "NEDELJA";

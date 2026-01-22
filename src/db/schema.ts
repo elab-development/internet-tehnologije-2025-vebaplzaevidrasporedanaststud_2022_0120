@@ -14,7 +14,6 @@ import { relations } from "drizzle-orm";
 
 // -- ENUMS --
 export const roleEnum = pgEnum("role", ["ADMIN", "STUDENT"]);
-export const attendanceStatusEnum = pgEnum("attendance_status", ["PRESENT", "ABSENT"]);
 export const sessionTypeEnum = pgEnum("session_type", ["PREDAVANJE", "VEZBE"]);
 export const cabinetTypeEnum = pgEnum("cabinet_type", ["LABORATORIJSKI", "AUDITORNI", "AMFITEATAR"]);
 export const dayOfWeekEnum = pgEnum("day_of_week", ["PONEDELJAK", "UTORAK", "SREDA", "CETVRTAK", "PETAK", "SUBOTA", "NEDELJA"]);
@@ -32,7 +31,6 @@ export const users = pgTable("users", {
     role: roleEnum("role").notNull().default("STUDENT"),
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Student specific details (TPT - Table Per Type)
@@ -87,14 +85,12 @@ export const attendance = pgTable("attendance", {
     id: uuid("id").primaryKey().defaultRandom(),
     studentId: uuid("student_id").notNull().references(() => users.id),
     termId: integer("term_id").notNull().references(() => terms.id),
-    status: attendanceStatusEnum("status").notNull().default("PRESENT"),
     timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
 // Holiday Calendar
 export const holidayCalendar = pgTable("holiday_calendar", {
     id: integer("id").primaryKey(),
-    name: text("name").notNull(),
     academicYear: varchar("academic_year", { length: 9 }).notNull(),
 });
 
