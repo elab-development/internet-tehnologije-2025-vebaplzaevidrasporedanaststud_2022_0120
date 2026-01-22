@@ -8,7 +8,8 @@ import {
     pgEnum,
     time,
     primaryKey,
-    date
+    date,
+    uniqueIndex
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -85,8 +86,10 @@ export const attendance = pgTable("attendance", {
     id: uuid("id").primaryKey().defaultRandom(),
     studentId: uuid("student_id").notNull().references(() => users.id),
     termId: integer("term_id").notNull().references(() => terms.id),
-    timestamp: timestamp("timestamp").defaultNow().notNull(),
-});
+    date: date("date").notNull(),
+}, (table) => ({
+    unq: uniqueIndex("attendance_student_term_date_idx").on(table.studentId, table.termId, table.date),
+}));
 
 // Holiday Calendar
 export const holidayCalendar = pgTable("holiday_calendar", {

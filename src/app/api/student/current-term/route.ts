@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { terms, students, subjects, cabinets } from "@/db/schema";
+import { terms, students, subjects, cabinets, attendance } from "@/db/schema";
 import { eq, and, lte, gte } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 
@@ -54,9 +54,22 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ exists: false });
         }
 
+        const term = activeTerm[0];
+        const todayStr = now.toISOString().split('T')[0];
+
+        // da li je student već prijavljen
+        const checkInRecord = await db.query.attendance.findFirst({
+            where: and(
+                eq(attendance.studentId, session.userId),
+                eq(attendance.termId, term.id),
+                eq(attendance.date, todayStr)
+            )
+        });
+
         return NextResponse.json({
             exists: true,
-            term: activeTerm[0]
+            term: term,
+            isCheckedIn: !!checkInRecord
         });
 
     } catch (error) {

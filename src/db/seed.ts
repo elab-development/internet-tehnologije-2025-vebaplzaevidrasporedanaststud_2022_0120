@@ -144,14 +144,14 @@ async function main() {
 
     // termini 
     await db.insert(schema.terms).values([
-        { id: 1, dayOfWeek: "PONEDELJAK", startTime: "08:15:00", endTime: "10:00:00", type: "PREDAVANJE", subjectId: 3, cabinetId: 3, groupId: 2 }, // A2, Prog 1
+        { id: 1, dayOfWeek: "PONEDELJAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 3, cabinetId: 3, groupId: 1 }, // A2, Prog 1
         { id: 2, dayOfWeek: "PONEDELJAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 3, cabinetId: 1, groupId: 2 },      // A2, Prog 1
-        { id: 3, dayOfWeek: "UTORAK", startTime: "12:15:00", endTime: "14:00:00", type: "PREDAVANJE", subjectId: 2, cabinetId: 3, groupId: 5 },    // B1, Baze
-        { id: 4, dayOfWeek: "UTORAK", startTime: "14:15:00", endTime: "16:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 5 },         // B1, Baze
-        { id: 5, dayOfWeek: "SREDA", startTime: "10:15:00", endTime: "12:00:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 10 },    // C2, IT
-        { id: 6, dayOfWeek: "SREDA", startTime: "12:15:00", endTime: "14:00:00", type: "VEZBE", subjectId: 1, cabinetId: 1, groupId: 10 },         // C2, IT
-        { id: 7, dayOfWeek: "CETVRTAK", startTime: "16:15:00", endTime: "18:00:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 11 }, // C3, IT
-        { id: 8, dayOfWeek: "PETAK", startTime: "08:15:00", endTime: "10:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 15 },         // D3, Baze
+        { id: 3, dayOfWeek: "UTORAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 2, cabinetId: 3, groupId: 1 },    // B1, Baze
+        { id: 4, dayOfWeek: "UTORAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 5 },         // B1, Baze
+        { id: 5, dayOfWeek: "SREDA", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 1 },    // C2, IT
+        { id: 6, dayOfWeek: "SREDA", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 1, cabinetId: 1, groupId: 10 },         // C2, IT
+        { id: 7, dayOfWeek: "CETVRTAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 1 }, // C3, IT
+        { id: 8, dayOfWeek: "PETAK", startTime: "08:15:00", endTime: "23:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 1 },         // D3, Baze
     ]).onConflictDoNothing();
 
     console.log("Seeding finished.");

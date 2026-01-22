@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 
 export default function StudentDashboard() {
-    const [data, setData] = useState<{ exists: boolean; term?: any } | null>(null);
+    const [data, setData] = useState<{ exists: boolean; term?: any; isCheckedIn?: boolean } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -24,28 +25,53 @@ export default function StudentDashboard() {
         }
     };
 
-    useEffect(() => {
-        const fetchCurrentTerm = async () => {
-            try {
-                const res = await fetch("/api/student/current-term");
-                const result = await res.json();
-                if (res.ok) {
-                    setData(result);
-                } else {
-                    setError(result.error || "Greška pri učitavanju termina.");
-                }
-            } catch (err) {
-                setError("Greška u povezivanju sa serverom.");
-            } finally {
-                setLoading(false);
+    const fetchCurrentTerm = async () => {
+        try {
+            const res = await fetch("/api/student/current-term");
+            const result = await res.json();
+            if (res.ok) {
+                setData(result);
+            } else {
+                setError(result.error || "Greška pri učitavanju termina.");
             }
-        };
+        } catch (err) {
+            setError("Greška u povezivanju sa serverom.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchCurrentTerm();
     }, []);
 
+    const handleCheckIn = async () => {
+        if (!data?.term?.id) return;
+        setError("");
+        setSuccess("");
+
+        try {
+            const res = await fetch("/api/student/attendance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ termId: data.term.id })
+            });
+            const result = await res.json();
+
+            if (res.ok) {
+                setSuccess("Uspešno ste se prijavili na termin!");
+                setData(prev => prev ? { ...prev, isCheckedIn: true } : null);
+            } else {
+                setError(result.error || "Greška prilikom prijave.");
+            }
+        } catch (err) {
+            setError("Greška u povezivanju sa serverom.");
+        }
+    };
+
     const currentTerm = data?.term;
     const exists = data?.exists;
+    const isCheckedIn = data?.isCheckedIn;
 
     return (
         <main className="min-h-screen bg-[#FDFCFB] selection:bg-brand-gold/30">
@@ -91,21 +117,29 @@ export default function StudentDashboard() {
                             {error}
                         </div>
                     )}
+                    {success && (
+                        <div className="mb-8 p-4 rounded-2xl bg-green-50 border border-green-100 text-green-600 text-sm font-bold text-center">
+                            {success}
+                        </div>
+                    )}
 
                     {exists ? (
                         <div className="glass-morphism border border-brand-blue/20 rounded-[3rem] p-12 shadow-2xl shadow-brand-blue/10 bg-white/40">
                             {/* Status Badge */}
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 mb-8">
-                                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                                <span className="text-xs font-bold text-green-700 uppercase tracking-widest">
-                                    Termin u toku
+                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-8 ${isCheckedIn ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'
+                                }`}>
+                                <div className={`h-2 w-2 rounded-full ${isCheckedIn ? 'bg-blue-500' : 'bg-green-500 animate-pulse'
+                                    }`} />
+                                <span className={`text-xs font-bold uppercase tracking-widest ${isCheckedIn ? 'text-blue-700' : 'text-green-700'
+                                    }`}>
+                                    {isCheckedIn ? 'Prisustvo zabeleženo' : 'Termin u toku'}
                                 </span>
                             </div>
 
                             {/* Term Details */}
                             <div className="space-y-6 mb-10">
                                 <div>
-                                    <h1 className="text-5xl font-serif font-bold text-brand-blue mb-2">
+                                    <h1 className="text-5xl font-serif font-bold text-brand-blue mb-2 text-balance">
                                         {currentTerm.subject}
                                     </h1>
                                     <div className="flex items-center gap-3 text-brand-blue/60">
@@ -138,10 +172,15 @@ export default function StudentDashboard() {
 
                             {/* Attendance Button */}
                             <Button
-                                variant="primary"
-                                className="w-full py-5 rounded-2xl bg-brand-blue text-white font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-brand-blue/20"
+                                onClick={handleCheckIn}
+                                disabled={isCheckedIn}
+                                variant={isCheckedIn ? "secondary" : "primary"}
+                                className={`w-full py-5 rounded-2xl font-bold text-lg transition-all shadow-lg ${isCheckedIn
+                                        ? 'bg-gray-100 text-gray-400 cursor-default'
+                                        : 'bg-brand-blue text-white hover:scale-[1.02] active:scale-[0.98] shadow-brand-blue/20'
+                                    }`}
                             >
-                                Prijavi se na termin
+                                {isCheckedIn ? 'Već ste prijavljeni' : 'Prijavi se na termin'}
                             </Button>
                         </div>
                     ) : (
