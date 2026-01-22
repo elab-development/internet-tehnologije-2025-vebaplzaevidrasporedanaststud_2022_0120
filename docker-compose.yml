@@ -39,6 +39,7 @@ services:
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
+      TZ: Europe/Belgrade
     depends_on:
       - db
 

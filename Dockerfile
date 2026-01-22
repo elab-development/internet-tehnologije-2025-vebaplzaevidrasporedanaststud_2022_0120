@@ -3,6 +3,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
+RUN apk add --no-cache tzdata
 COPY package*.json ./
 RUN npm install
 

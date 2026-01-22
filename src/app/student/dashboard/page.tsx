@@ -1,18 +1,36 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/Button";
 
 export default function StudentDashboard() {
-    // test podaci
-    const currentTerm = {
-        exists: true,
-        subject: "Internet tehnologije",
-        type: "PREDAVANJE",
-        time: "10:00 - 12:00",
-        cabinet: "Amfiteatar 1",
-        dayOfWeek: "SREDA"
-    };
+    const [data, setData] = useState<{ exists: boolean; term?: any } | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchCurrentTerm = async () => {
+            try {
+                const res = await fetch("/api/student/current-term");
+                const result = await res.json();
+                if (res.ok) {
+                    setData(result);
+                } else {
+                    setError(result.error || "Greška pri učitavanju termina.");
+                }
+            } catch (err) {
+                setError("Greška u povezivanju sa serverom.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCurrentTerm();
+    }, []);
+
+    const currentTerm = data?.term;
+    const exists = data?.exists;
 
     return (
         <main className="min-h-screen bg-[#FDFCFB] selection:bg-brand-gold/30">
@@ -50,7 +68,13 @@ export default function StudentDashboard() {
                 <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl -z-10" />
 
                 <div className="mx-auto max-w-4xl px-6 w-full">
-                    {currentTerm.exists ? (
+                    {error && (
+                        <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-bold text-center">
+                            {error}
+                        </div>
+                    )}
+
+                    {exists ? (
                         <div className="glass-morphism border border-brand-blue/20 rounded-[3rem] p-12 shadow-2xl shadow-brand-blue/10 bg-white/40">
                             {/* Status Badge */}
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 mb-8">
@@ -80,7 +104,7 @@ export default function StudentDashboard() {
                                             Vreme
                                         </p>
                                         <p className="text-2xl font-bold text-brand-blue">
-                                            {currentTerm.time}
+                                            {currentTerm.startTime.slice(0, 5)} - {currentTerm.endTime.slice(0, 5)}
                                         </p>
                                     </div>
                                     <div>
