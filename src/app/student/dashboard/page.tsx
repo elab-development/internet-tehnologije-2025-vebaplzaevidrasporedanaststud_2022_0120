@@ -2,12 +2,27 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 
 export default function StudentDashboard() {
     const [data, setData] = useState<{ exists: boolean; term?: any } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        try {
+            const res = await fetch("/api/auth/logout", { method: "POST" });
+            if (res.ok) {
+                router.push("/login"); // Preusmeravanje na login
+            } else {
+                alert("Greška prilikom odjavljivanja.");
+            }
+        } catch (err) {
+            alert("Greška u povezivanju sa serverom.");
+        }
+    };
 
     useEffect(() => {
         const fetchCurrentTerm = async () => {
@@ -54,7 +69,10 @@ export default function StudentDashboard() {
                         <button className="text-sm font-bold text-brand-blue hover:text-brand-gold transition-colors">
                             Profil
                         </button>
-                        <button className="text-sm font-bold text-red-500 hover:text-red-600 transition-colors">
+                        <button
+                            onClick={handleLogout}
+                            className="text-sm font-bold text-red-500 hover:text-red-600 transition-colors"
+                        >
                             Odjavi se
                         </button>
                     </div>
