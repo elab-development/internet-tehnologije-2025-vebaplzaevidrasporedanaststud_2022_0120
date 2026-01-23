@@ -32,7 +32,7 @@ export class GroupService {
         lastName: string,
         studyProgram: "Informacioni sistemi" | "Menadzment",
         yearOfStudy: number
-    ): Promise<number | null> {
+    ): Promise<string | null> {
         const half = this.getAlphabetHalf(lastName);
 
         const groups = await db

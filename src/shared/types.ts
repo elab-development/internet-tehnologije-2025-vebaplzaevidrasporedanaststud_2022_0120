@@ -25,5 +25,5 @@ export interface Student extends User {
     studyProgram: string;
     yearOfStudy: number;
     pictureUrl?: string;
-    groupId?: number;
+    groupId?: string;
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { StudentHeader } from "@/components/StudentHeader";
 
 interface ScheduleItem {
-    id: number;
+    id: string;
     dayOfWeek: string;
     startTime: string;
     endTime: string;
@@ -123,8 +123,8 @@ export default function SchedulePage() {
                                                         </td>
                                                         <td className="py-5 px-4">
                                                             <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter ${item.type === 'PREDAVANJE'
-                                                                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                                    : 'bg-amber-100 text-amber-700 border border-amber-200'
+                                                                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                                : 'bg-amber-100 text-amber-700 border border-amber-200'
                                                                 }`}>
                                                                 {item.type}
                                                             </span>

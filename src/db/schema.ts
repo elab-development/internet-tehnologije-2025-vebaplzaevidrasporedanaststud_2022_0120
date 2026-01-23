@@ -41,12 +41,12 @@ export const students = pgTable("students", {
     studyProgram: studyProgramEnum("study_program").notNull(),
     yearOfStudy: integer("year_of_study").notNull(),
     pictureUrl: text("picture_url"),
-    groupId: integer("group_id").references(() => studentGroups.id),
+    groupId: uuid("group_id").references(() => studentGroups.id),
 });
 
 // Student Groups
 export const studentGroups = pgTable("student_groups", {
-    id: integer("id").primaryKey(), // Using integer as per diagram PK
+    id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     studyProgram: studyProgramEnum("study_program").notNull(),
     yearOfStudy: integer("year_of_study").notNull(),
@@ -55,7 +55,7 @@ export const studentGroups = pgTable("student_groups", {
 
 // Subjects
 export const subjects = pgTable("subjects", {
-    id: integer("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
     espb: integer("espb").notNull(),
     description: text("description"),
@@ -63,7 +63,7 @@ export const subjects = pgTable("subjects", {
 
 // Cabinets
 export const cabinets = pgTable("cabinets", {
-    id: integer("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     number: varchar("number", { length: 20 }).notNull().unique(),
     capacity: integer("capacity").notNull(),
     type: cabinetTypeEnum("type").notNull(),
@@ -71,21 +71,21 @@ export const cabinets = pgTable("cabinets", {
 
 // Terms (Schedule entries)
 export const terms = pgTable("terms", {
-    id: integer("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     dayOfWeek: dayOfWeekEnum("day_of_week").notNull(),
     startTime: time("start_time").notNull(),
     endTime: time("end_time").notNull(),
     type: sessionTypeEnum("type").notNull(),
-    subjectId: integer("subject_id").notNull().references(() => subjects.id),
-    cabinetId: integer("cabinet_id").notNull().references(() => cabinets.id),
-    groupId: integer("group_id").notNull().references(() => studentGroups.id),
+    subjectId: uuid("subject_id").notNull().references(() => subjects.id),
+    cabinetId: uuid("cabinet_id").notNull().references(() => cabinets.id),
+    groupId: uuid("group_id").notNull().references(() => studentGroups.id),
 });
 
 // Attendance Record
 export const attendance = pgTable("attendance", {
     id: uuid("id").primaryKey().defaultRandom(),
     studentId: uuid("student_id").notNull().references(() => users.id),
-    termId: integer("term_id").notNull().references(() => terms.id),
+    termId: uuid("term_id").notNull().references(() => terms.id),
     date: date("date").notNull(),
 }, (table) => ({
     unq: uniqueIndex("attendance_student_term_date_idx").on(table.studentId, table.termId, table.date),
@@ -93,16 +93,16 @@ export const attendance = pgTable("attendance", {
 
 // Holiday Calendar
 export const holidayCalendar = pgTable("holiday_calendar", {
-    id: integer("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     academicYear: varchar("academic_year", { length: 9 }).notNull(),
 });
 
 // Individual Holidays
 export const holidays = pgTable("holidays", {
-    id: integer("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     date: date("date").notNull(),
     type: holidayTypeEnum("type").notNull(),
-    calendarId: integer("calendar_id").notNull().references(() => holidayCalendar.id),
+    calendarId: uuid("calendar_id").notNull().references(() => holidayCalendar.id),
 });
 
 // -- RELATIONS --

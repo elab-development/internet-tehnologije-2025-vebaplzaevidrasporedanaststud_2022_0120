@@ -2,15 +2,22 @@ import "dotenv/config";
 import { db } from "./index";
 import * as schema from "./schema";
 import bcrypt from "bcrypt";
+import { sql } from "drizzle-orm";
 
 async function main() {
-    console.log("Seeding database...");
+    console.log("Seeding database (UUID version)...");
 
-    // Password hashes
+    // brisanje starih podataka pre seedinga
+
+    console.log("Cleaning old data...");
+    await db.execute(sql`TRUNCATE TABLE ${schema.attendance}, ${schema.terms}, ${schema.holidays}, ${schema.holidayCalendar}, ${schema.cabinets}, ${schema.subjects}, ${schema.students}, ${schema.studentGroups}, ${schema.users} CASCADE`);
+
+
     const hashedPass = await bcrypt.hash("123", 10);
     const adminPass = await bcrypt.hash("admin123", 10);
 
     // Users
+    console.log("Inserting users...");
     const userData = await db.insert(schema.users).values([
         {
             username: "admin_lazar",
@@ -60,13 +67,13 @@ async function main() {
             firstName: "Petar",
             lastName: "Petrović"
         }
-    ]).onConflictDoNothing().returning();
+    ]).returning();
 
-    //Student Groups (16 groups: A1-D4)
+    // Student Groups (16 groups: A1-D4)
+    console.log("Inserting groups...");
     const studyPrograms = ["Informacioni sistemi", "Menadzment"] as const;
     const yearLetters = ["A", "B", "C", "D"];
     const groupEntries: any[] = [];
-    let groupIdCounter = 1;
 
     for (let yearIdx = 0; yearIdx < 4; yearIdx++) {
         const year = yearIdx + 1;
@@ -76,7 +83,6 @@ async function main() {
         for (const sp of studyPrograms) {
             for (let half = 1; half <= 2; half++) {
                 groupEntries.push({
-                    id: groupIdCounter++,
                     name: `${letter}${subCounter++}`,
                     studyProgram: sp,
                     yearOfStudy: year,
@@ -86,78 +92,87 @@ async function main() {
         }
     }
 
-    await db.insert(schema.studentGroups).values(groupEntries).onConflictDoNothing();
-    console.log(`Inserted ${groupEntries.length} student groups (A1-D4).`);
+    const groupsData = await db.insert(schema.studentGroups).values(groupEntries).returning();
+    console.log(`Inserted ${groupsData.length} student groups.`);
 
-    // Students tabela
+    // Cabinets
+    console.log("Inserting cabinets...");
+    const cabinetsData = await db.insert(schema.cabinets).values([
+        { number: "001", capacity: 30, type: "LABORATORIJSKI" },
+        { number: "101", capacity: 60, type: "AUDITORNI" },
+        { number: "Amfiteatar 1", capacity: 200, type: "AMFITEATAR" },
+    ]).returning();
+
+    // Subjects
+    console.log("Inserting subjects...");
+    const subjectsData = await db.insert(schema.subjects).values([
+        { title: "Internet tehnologije", espb: 6, description: "Next.js" },
+        { title: "Baze podataka", espb: 6, description: "SQL" },
+        { title: "Programiranje 1", espb: 6, description: "Java" },
+    ]).returning();
+
+    // Student details
+    console.log("Inserting student details...");
+    const findGroup = (name: string) => groupsData.find(g => g.name === name)?.id;
     const studentsToSeed = [
-        { username: "student_marko", index: "2022/0120", sp: "Informacioni sistemi", year: 1, group: 2 }, // A2 (IS, H2 - Marković)
-        { username: "student_jovan", index: "2022/0500", sp: "Informacioni sistemi", year: 2, group: 5 }, // B1 (IS, H1 - Jovanović)
-        { username: "student_ana", index: "2021/0001", sp: "Menadzment", year: 3, group: 11 },           // C3 (MEN, H1 - Anić)
-        { username: "student_maja", index: "2020/0042", sp: "Menadzment", year: 4, group: 15 },           // D3 (MEN, H1 - Majić)
-        { username: "student_petar", index: "2021/0240", sp: "Informacioni sistemi", year: 3, group: 10 } // C2 (IS, H2 - Petrović)
+        { username: "student_marko", index: "2022/0120", sp: "Informacioni sistemi", year: 1, groupName: "A2" },
+        { username: "student_jovan", index: "2022/0500", sp: "Informacioni sistemi", year: 2, groupName: "B1" },
+        { username: "student_ana", index: "2021/0001", sp: "Menadzment", year: 3, groupName: "C3" },
+        { username: "student_maja", index: "2020/0042", sp: "Menadzment", year: 4, groupName: "D3" },
+        { username: "student_petar", index: "2021/0240", sp: "Informacioni sistemi", year: 3, groupName: "C2" }
     ];
 
     const studentDetails = [];
     for (const s of studentsToSeed) {
         const user = userData.find(u => u.username === s.username);
-        if (user) {
+        const groupId = findGroup(s.groupName);
+        if (user && groupId) {
             studentDetails.push({
                 userId: user.id,
                 indexNumber: s.index,
                 studyProgram: s.sp as any,
                 yearOfStudy: s.year,
-                groupId: s.group
+                groupId: groupId
             });
         }
     }
 
     if (studentDetails.length > 0) {
-        await db.insert(schema.students).values(studentDetails).onConflictDoNothing();
-        console.log(`Inserted student details for ${studentDetails.length} students.`);
+        await db.insert(schema.students).values(studentDetails);
     }
 
-    // Cabinets
-    await db.insert(schema.cabinets).values([
-        { id: 1, number: "001", capacity: 30, type: "LABORATORIJSKI" },
-        { id: 2, number: "101", capacity: 60, type: "AUDITORNI" },
-        { id: 3, number: "Amfiteatar 1", capacity: 200, type: "AMFITEATAR" },
-    ]).onConflictDoNothing();
-
-    // Subjects
-    await db.insert(schema.subjects).values([
-        { id: 1, title: "Internet tehnologije", espb: 6, description: "Next.js" },
-        { id: 2, title: "Baze podataka", espb: 6, description: "SQL" },
-        { id: 3, title: "Programiranje 1", espb: 6, description: "Java" },
-    ]).onConflictDoNothing();
-
     // Holiday Calendar
-    await db.insert(schema.holidayCalendar).values({
-        id: 1,
+    console.log("Inserting calendar...");
+    const calendarData = await db.insert(schema.holidayCalendar).values({
         academicYear: "2024/2025"
-    }).onConflictDoNothing();
+    }).returning();
 
     await db.insert(schema.holidays).values([
-        { id: 1, date: "2025-01-07", type: "NERADNI_DAN", calendarId: 1 },
-        { id: 2, date: "2025-02-15", type: "NERADNI_DAN", calendarId: 1 }
-    ]).onConflictDoNothing();
+        { date: "2025-01-07", type: "NERADNI_DAN", calendarId: calendarData[0].id },
+        { date: "2025-02-15", type: "NERADNI_DAN", calendarId: calendarData[0].id }
+    ]);
 
-    // termini 
+    // Terms
+    console.log("Inserting terms...");
+    const getSub = (title: string) => subjectsData.find(s => s.title === title)!.id;
+    const getCab = (num: string) => cabinetsData.find(c => c.number === num)!.id;
+    const getGrp = (name: string) => groupsData.find(g => g.name === name)!.id;
+
     await db.insert(schema.terms).values([
-        { id: 1, dayOfWeek: "PONEDELJAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 3, cabinetId: 3, groupId: 1 }, // A2, Prog 1
-        { id: 2, dayOfWeek: "PONEDELJAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 3, cabinetId: 1, groupId: 2 },      // A2, Prog 1
-        { id: 3, dayOfWeek: "UTORAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 2, cabinetId: 3, groupId: 1 },    // B1, Baze
-        { id: 4, dayOfWeek: "UTORAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 5 },         // B1, Baze
-        { id: 5, dayOfWeek: "SREDA", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 1 },    // C2, IT
-        { id: 6, dayOfWeek: "SREDA", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: 1, cabinetId: 1, groupId: 10 },         // C2, IT
-        { id: 7, dayOfWeek: "CETVRTAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: 1, cabinetId: 3, groupId: 1 }, // C3, IT
-        { id: 8, dayOfWeek: "PETAK", startTime: "08:15:00", endTime: "23:00:00", type: "VEZBE", subjectId: 2, cabinetId: 2, groupId: 1 },         // D3, Baze
-    ]).onConflictDoNothing();
+        { dayOfWeek: "PONEDELJAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: getSub("Programiranje 1"), cabinetId: getCab("Amfiteatar 1"), groupId: getGrp("A1") },
+        { dayOfWeek: "PONEDELJAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: getSub("Programiranje 1"), cabinetId: getCab("001"), groupId: getGrp("A2") },
+        { dayOfWeek: "UTORAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: getSub("Baze podataka"), cabinetId: getCab("Amfiteatar 1"), groupId: getGrp("A1") },
+        { dayOfWeek: "UTORAK", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: getSub("Baze podataka"), cabinetId: getCab("101"), groupId: getGrp("B1") },
+        { dayOfWeek: "SREDA", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: getSub("Internet tehnologije"), cabinetId: getCab("Amfiteatar 1"), groupId: getGrp("A1") },
+        { dayOfWeek: "SREDA", startTime: "10:15:00", endTime: "12:00:00", type: "VEZBE", subjectId: getSub("Internet tehnologije"), cabinetId: getCab("001"), groupId: getGrp("C2") },
+        { dayOfWeek: "CETVRTAK", startTime: "08:15:00", endTime: "23:30:00", type: "PREDAVANJE", subjectId: getSub("Internet tehnologije"), cabinetId: getCab("Amfiteatar 1"), groupId: getGrp("A1") },
+        { dayOfWeek: "PETAK", startTime: "08:15:00", endTime: "23:00:00", type: "VEZBE", subjectId: getSub("Baze podataka"), cabinetId: getCab("101"), groupId: getGrp("A1") },
+    ]);
 
-    console.log("Seeding finished.");
+    console.log("Seeding finished successfully.");
 }
 
 main().catch((err) => {
-    console.error(err);
+    console.error("Seeding failed:", err);
     process.exit(1);
 });
