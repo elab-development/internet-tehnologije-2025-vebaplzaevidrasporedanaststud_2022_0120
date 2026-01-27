@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { Badge } from "@/components/Badge";
 
 // za prazna polja
 function EmptyState({ message }: { message: string }) {
@@ -92,12 +94,11 @@ export default async function HomePage() {
               {subjects.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {subjects.map((subject: any) => (
-                    <div key={subject.id} className="group p-8 rounded-3xl border border-brand-blue/5 bg-white hover:border-brand-gold/30 hover:shadow-2xl hover:shadow-brand-gold/5 transition-all">
+                    <Card key={subject.id} className="group p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 hover:shadow-2xl hover:shadow-brand-gold/5 transition-all">
                       <div className="flex justify-between items-start mb-6">
-                        <div className="h-10 px-3 rounded-xl bg-brand-blue/5 flex items-center justify-center text-brand-blue font-bold whitespace-nowrap">
+                        <Badge variant="blue">
                           ESPB: {subject.espb}
-                        </div>
-
+                        </Badge>
                       </div>
                       <h3 className="text-2xl font-serif font-bold text-brand-blue mb-3 group-hover:text-brand-gold transition-colors leading-tight">
                         {subject.title}
@@ -105,7 +106,7 @@ export default async function HomePage() {
                       <p className="text-brand-blue/50 text-sm leading-relaxed">
                         {subject.description}
                       </p>
-                    </div>
+                    </Card>
                   ))}
                 </div>
               ) : (
@@ -125,7 +126,7 @@ export default async function HomePage() {
                 {cabinets.length > 0 ? (
                   <div className="space-y-4">
                     {cabinets.map((cabinet: any) => (
-                      <div key={cabinet.id} className="p-6 rounded-2xl bg-brand-blue text-white group hover:bg-brand-gold transition-colors border border-transparent shadow-sm">
+                      <Card key={cabinet.id} variant="primary" className="p-6 group hover:bg-brand-gold transition-colors rounded-2xl">
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1 group-hover:text-brand-blue/70">{cabinet.type}</p>
@@ -136,7 +137,7 @@ export default async function HomePage() {
                             <p className="text-[8px] font-bold uppercase text-white/40 group-hover:text-brand-blue/50">Mesta</p>
                           </div>
                         </div>
-                      </div>
+                      </Card>
                     ))}
                   </div>
                 ) : (

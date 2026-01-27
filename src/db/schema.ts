@@ -23,7 +23,7 @@ export const studyProgramEnum = pgEnum("study_program", ["Informacioni sistemi",
 
 // -- TABLES --
 
-// Base User table
+// User table
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
     username: varchar("username", { length: 50 }).notNull().unique(),
@@ -34,7 +34,7 @@ export const users = pgTable("users", {
     lastName: text("last_name").notNull(),
 });
 
-// Student specific details (TPT - Table Per Type)
+// Student 
 export const students = pgTable("students", {
     userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: 'cascade' }),
     indexNumber: varchar("index_number", { length: 15 }).notNull().unique(),
@@ -69,7 +69,7 @@ export const cabinets = pgTable("cabinets", {
     type: cabinetTypeEnum("type").notNull(),
 });
 
-// Terms (Schedule entries)
+// Terms 
 export const terms = pgTable("terms", {
     id: uuid("id").primaryKey().defaultRandom(),
     dayOfWeek: dayOfWeekEnum("day_of_week").notNull(),
@@ -105,7 +105,7 @@ export const holidays = pgTable("holidays", {
     calendarId: uuid("calendar_id").notNull().references(() => holidayCalendar.id),
 });
 
-// -- RELATIONS --
+// RELATIONS
 
 export const usersRelations = relations(users, ({ one, many }) => ({
     student: one(students, {

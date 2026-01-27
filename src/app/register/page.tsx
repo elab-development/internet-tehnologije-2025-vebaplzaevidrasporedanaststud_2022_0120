@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { Input } from "@/components/Input";
+import { Select } from "@/components/Select";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -50,9 +53,6 @@ export default function RegisterPage() {
         }
     };
 
-    const inputClass = "w-full px-5 py-3 rounded-xl border border-brand-blue/10 bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-medium text-brand-blue text-sm placeholder:text-brand-blue/20";
-    const labelClass = "block text-[10px] font-bold text-brand-blue/40 uppercase tracking-widest mb-1.5 ml-1";
-
     return (
         <main className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6 relative overflow-hidden">
             {/* Decorative background */}
@@ -68,10 +68,10 @@ export default function RegisterPage() {
                     <p className="text-brand-blue/50 text-sm font-medium">Nakon registracije biće vam dodeljena grupa na osnovu vaših podataka.</p>
                 </div>
 
-                <div className="glass-morphism border border-brand-blue/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-brand-blue/5 bg-white/40">
+                <Card className="p-8 md:p-12">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && (
-                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-xs font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="p-4 rounded-xl bg-red-100 border border-red-200 text-red-800 text-xs font-bold animate-in fade-in slide-in-from-top-2 duration-300">
                                 {error}
                             </div>
                         )}
@@ -79,103 +79,78 @@ export default function RegisterPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Personal Data */}
                             <div className="space-y-4">
-                                <div>
-                                    <label className={labelClass}>Ime</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className={inputClass}
-                                        placeholder="Milovan"
-                                        value={formData.firstName}
-                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className={labelClass}>Prezime</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className={inputClass}
-                                        placeholder="Anić"
-                                        value={formData.lastName}
-                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className={labelClass}>Korisničko ime</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className={inputClass}
-                                        placeholder="milovan_anic"
-                                        value={formData.username}
-                                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    />
-                                </div>
+                                <Input
+                                    label="Ime"
+                                    required
+                                    placeholder="Milovan"
+                                    value={formData.firstName}
+                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                />
+                                <Input
+                                    label="Prezime"
+                                    required
+                                    placeholder="Anić"
+                                    value={formData.lastName}
+                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                />
+                                <Input
+                                    label="Korisničko ime"
+                                    required
+                                    placeholder="milovan_anic"
+                                    value={formData.username}
+                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                />
                             </div>
 
                             {/* Account & Studies */}
                             <div className="space-y-4">
-                                <div>
-                                    <label className={labelClass}>Email adresa</label>
-                                    <input
-                                        type="email"
-                                        required
-                                        className={inputClass}
-                                        placeholder="student@fon.bg.ac.rs"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className={labelClass}>Lozinka</label>
-                                    <input
-                                        type="password"
-                                        required
-                                        className={inputClass}
-                                        placeholder="••••••••"
-                                        value={formData.password}
-                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className={labelClass}>Broj indeksa</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className={inputClass}
-                                        placeholder="XXXX/YYYY (npr. 2022/0120)"
-                                        value={formData.indexNumber}
-                                        onChange={(e) => setFormData({ ...formData, indexNumber: e.target.value })}
-                                    />
-                                </div>
+                                <Input
+                                    label="Email adresa"
+                                    type="email"
+                                    required
+                                    placeholder="student@fon.bg.ac.rs"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                                <Input
+                                    label="Lozinka"
+                                    type="password"
+                                    required
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                />
+                                <Input
+                                    label="Broj indeksa"
+                                    required
+                                    placeholder="XXXX/YYYY (npr. 2022/0120)"
+                                    value={formData.indexNumber}
+                                    onChange={(e) => setFormData({ ...formData, indexNumber: e.target.value })}
+                                />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-brand-blue/5">
-                            <div>
-                                <label className={labelClass}>Studijski program</label>
-                                <select
-                                    className={inputClass}
-                                    value={formData.studyProgram}
-                                    onChange={(e) => setFormData({ ...formData, studyProgram: e.target.value as any })}
-                                >
-                                    <option value="Informacioni sistemi">Informacioni sistemi</option>
-                                    <option value="Menadzment">Menadzment</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className={labelClass}>Godina studija</label>
-                                <select
-                                    className={inputClass}
-                                    value={formData.yearOfStudy}
-                                    onChange={(e) => setFormData({ ...formData, yearOfStudy: Number(e.target.value) })}
-                                >
-                                    {[1, 2, 3, 4].map((y) => (
-                                        <option key={y} value={y}>{y}. godina</option>
-                                    ))}
-                                </select>
-                            </div>
+                            <Select
+                                label="Studijski program"
+                                value={formData.studyProgram}
+                                onChange={(e) => setFormData({ ...formData, studyProgram: e.target.value as any })}
+                                options={[
+                                    { value: "Informacioni sistemi", label: "Informacioni sistemi" },
+                                    { value: "Menadzment", label: "Menadzment" }
+                                ]}
+                            />
+                            <Select
+                                label="Godina studija"
+                                value={formData.yearOfStudy}
+                                onChange={(e) => setFormData({ ...formData, yearOfStudy: Number(e.target.value) })}
+                                options={[
+                                    { value: 1, label: "1. godina" },
+                                    { value: 2, label: "2. godina" },
+                                    { value: 3, label: "3. godina" },
+                                    { value: 4, label: "4. godina" }
+                                ]}
+                            />
                         </div>
 
                         <Button
@@ -196,7 +171,7 @@ export default function RegisterPage() {
                             </Link>
                         </p>
                     </footer>
-                </div>
+                </Card>
             </div>
         </main>
     );

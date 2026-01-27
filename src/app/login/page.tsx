@@ -4,6 +4,8 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { Input } from "@/components/Input";
 
 function LoginContent() {
     const router = useRouter();
@@ -61,42 +63,36 @@ function LoginContent() {
                     <p className="text-brand-blue/50 font-medium">Unesite svoje podatke za pristup portalu.</p>
                 </div>
 
-                <div className="glass-morphism border border-brand-blue/10 rounded-[2.5rem] p-10 shadow-2xl shadow-brand-blue/5 bg-white/40">
+                <Card className="p-10">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {isRegistered && !error && (
-                            <div className="p-4 rounded-2xl bg-green-50 border border-green-100 text-green-600 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="p-4 rounded-2xl bg-green-100 border border-green-200 text-green-800 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
                                 Uspešno ste se registrovali! Prijavite se sada.
                             </div>
                         )}
                         {error && (
-                            <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="p-4 rounded-2xl bg-red-100 border border-red-200 text-red-800 text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300">
                                 {error}
                             </div>
                         )}
 
-                        <div>
-                            <label className="block text-[10px] font-bold text-brand-blue/40 uppercase tracking-widest mb-2 ml-1">Korisničko ime</label>
-                            <input
-                                type="text"
-                                required
-                                className="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 bg-white/50 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-medium text-brand-blue placeholder:text-brand-blue/20"
-                                placeholder="Unesite korisničko ime"
-                                value={formData.username}
-                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                            />
-                        </div>
+                        <Input
+                            label="Korisničko ime"
+                            type="text"
+                            required
+                            placeholder="Unesite korisničko ime"
+                            value={formData.username}
+                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        />
 
-                        <div>
-                            <label className="block text-[10px] font-bold text-brand-blue/40 uppercase tracking-widest mb-2 ml-1">Lozinka</label>
-                            <input
-                                type="password"
-                                required
-                                className="w-full px-6 py-4 rounded-2xl border border-brand-blue/10 bg-white/50 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-medium text-brand-blue placeholder:text-brand-blue/20"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            />
-                        </div>
+                        <Input
+                            label="Lozinka"
+                            type="password"
+                            required
+                            placeholder="••••••••"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        />
 
                         <Button
                             type="submit"
@@ -116,7 +112,7 @@ function LoginContent() {
                             </Link>
                         </p>
                     </div>
-                </div>
+                </Card>
             </div>
         </main>
     );

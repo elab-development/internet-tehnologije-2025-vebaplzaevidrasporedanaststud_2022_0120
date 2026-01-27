@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { cn } from "@/lib/utils";
+
 interface StudentHeaderProps {
     activePage: "prisustvo" | "raspored" | "kalendar" | "profil";
 }
@@ -24,9 +26,10 @@ export function StudentHeader({ activePage }: StudentHeaderProps) {
     };
 
     const linkClass = (page: string) =>
-        page === activePage
-            ? "text-sm font-bold text-brand-gold transition-colors"
-            : "text-sm font-bold text-brand-blue hover:text-brand-gold transition-colors";
+        cn(
+            "text-sm font-bold transition-colors",
+            page === activePage ? "text-brand-gold" : "text-brand-blue hover:text-brand-gold"
+        );
 
     return (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl">

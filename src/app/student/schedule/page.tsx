@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { StudentHeader } from "@/components/StudentHeader";
+import { Card } from "@/components/Card";
+import { Badge } from "@/components/Badge";
+import { PageHeading } from "@/components/PageHeading";
+import { Table } from "@/components/Table";
 
 interface ScheduleItem {
     id: string;
@@ -67,12 +71,10 @@ export default function SchedulePage() {
                         </div>
                     )}
 
-                    <header className="mb-12">
-                        <h1 className="text-4xl font-serif font-bold text-brand-blue mb-2">
-                            Raspored za grupu {data?.groupName || "..."}:
-                        </h1>
-                        <p className="text-brand-blue/60 font-medium">Pregled svih zakazanih termina za vašu grupu.</p>
-                    </header>
+                    <PageHeading
+                        title={`Raspored za grupu ${data?.groupName || "..."}:`}
+                        subtitle="Pregled svih zakazanih termina za vašu grupu."
+                    />
 
                     <div className="space-y-12">
                         {daysOrder.map((day) => {
@@ -85,63 +87,47 @@ export default function SchedulePage() {
                                         {day}
                                     </h2>
 
-                                    <div className="glass-morphism border border-brand-blue/20 rounded-[2rem] p-6 shadow-xl shadow-brand-blue/5 overflow-x-auto">
-                                        <table className="w-full border-collapse">
-                                            <thead>
-                                                <tr className="border-b border-brand-blue/10">
-                                                    <th className="text-left py-4 px-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest">
-                                                        Vreme
-                                                    </th>
-                                                    <th className="text-left py-4 px-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest">
-                                                        Predmet
-                                                    </th>
-                                                    <th className="text-left py-4 px-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest">
-                                                        Tip
-                                                    </th>
-                                                    <th className="text-left py-4 px-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest">
-                                                        Kabinet
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {daySchedule.map((item) => (
-                                                    <tr
-                                                        key={item.id}
-                                                        className="group border-b border-brand-blue/5 last:border-0 hover:bg-brand-blue/[0.02] transition-colors"
-                                                    >
-                                                        <td className="py-5 px-4">
-                                                            <span className="text-sm font-bold text-brand-blue bg-brand-blue/5 px-3 py-1.5 rounded-lg whitespace-nowrap">
-                                                                {item.startTime.slice(0, 5)} - {item.endTime.slice(0, 5)}
+                                    <Card className="p-6 overflow-x-auto">
+                                        <Table headers={["Vreme", "Predmet", "Tip", "Kabinet"]}>
+                                            {daySchedule.map((item) => (
+                                                <tr
+                                                    key={item.id}
+                                                    className="group border-b border-brand-blue/5 last:border-0 hover:bg-brand-blue/[0.02] transition-colors"
+                                                >
+                                                    <td className="py-5 px-4">
+                                                        <span className="text-sm font-bold text-brand-blue bg-brand-blue/5 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                                                            {item.startTime.slice(0, 5)} - {item.endTime.slice(0, 5)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-5 px-4">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-lg font-bold text-brand-blue group-hover:text-brand-gold transition-colors leading-tight">
+                                                                {item.subject}
                                                             </span>
-                                                        </td>
-                                                        <td className="py-5 px-4">
-                                                            <div className="flex flex-col">
-                                                                <span className="text-lg font-bold text-brand-blue group-hover:text-brand-gold transition-colors leading-tight">
-                                                                    {item.subject}
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                        <td className="py-5 px-4">
-                                                            <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter ${item.type === 'PREDAVANJE'
-                                                                ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                                : 'bg-amber-100 text-amber-700 border border-amber-200'
-                                                                }`}>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-5 px-4 text-center">
+                                                        <div className="flex justify-center">
+                                                            <Badge
+                                                                variant={item.type === 'PREDAVANJE' ? "blue" : "amber"}
+                                                                className="w-32"
+                                                            >
                                                                 {item.type}
+                                                            </Badge>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-5 px-4">
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <div className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
+                                                            <span className="text-sm font-bold text-brand-blue/70">
+                                                                {item.cabinet}
                                                             </span>
-                                                        </td>
-                                                        <td className="py-5 px-4">
-                                                            <div className="flex items-center gap-2">
-                                                                <div className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
-                                                                <span className="text-sm font-bold text-brand-blue/70">
-                                                                    {item.cabinet}
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </Table>
+                                    </Card>
                                 </div>
                             );
                         })}

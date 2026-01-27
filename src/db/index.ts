@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
-
+//ovo kreira instancu baze podataka, jednu
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });

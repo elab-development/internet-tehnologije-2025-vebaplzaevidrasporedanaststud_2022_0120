@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/Button";
 import { StudentHeader } from "@/components/StudentHeader";
+import { Card } from "@/components/Card";
+import { Badge } from "@/components/Badge";
+import { PageHeading } from "@/components/PageHeading";
 
 export default function StudentDashboard() {
     const [data, setData] = useState<{ exists: boolean; term?: any; isCheckedIn?: boolean } | null>(null);
@@ -67,33 +70,31 @@ export default function StudentDashboard() {
 
                 <div className="mx-auto max-w-4xl px-6 w-full">
                     {error && (
-                        <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-bold text-center">
+                        <div className="mb-8 p-4 rounded-2xl bg-red-100 border border-red-200 text-red-800 text-sm font-bold text-center">
                             {error}
                         </div>
                     )}
                     {success && (
-                        <div className="mb-8 p-4 rounded-2xl bg-green-50 border border-green-100 text-green-600 text-sm font-bold text-center">
+                        <div className="mb-8 p-4 rounded-2xl bg-green-100 border border-green-200 text-green-800 text-sm font-bold text-center">
                             {success}
                         </div>
                     )}
 
                     {exists ? (
-                        <div className="glass-morphism border border-brand-blue/20 rounded-[3rem] p-12 shadow-2xl shadow-brand-blue/10 bg-white/40">
+                        <Card className="p-12">
                             {/* Status Badge */}
-                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-8 ${isCheckedIn ? 'bg-blue-50 border-blue-100' : 'bg-green-50 border-green-100'
-                                }`}>
-                                <div className={`h-2 w-2 rounded-full ${isCheckedIn ? 'bg-blue-500' : 'bg-green-500 animate-pulse'
-                                    }`} />
-                                <span className={`text-xs font-bold uppercase tracking-widest ${isCheckedIn ? 'text-blue-700' : 'text-green-700'
-                                    }`}>
-                                    {isCheckedIn ? 'Prisustvo zabeleženo' : 'Termin u toku'}
-                                </span>
-                            </div>
+                            <Badge
+                                variant={isCheckedIn ? "blue" : "green"}
+                                dot
+                                className="mb-8"
+                            >
+                                {isCheckedIn ? 'Prisustvo zabeleženo' : 'Termin u toku'}
+                            </Badge>
 
                             {/* Term Details */}
                             <div className="space-y-6 mb-10">
                                 <div>
-                                    <h1 className="text-5xl font-serif font-bold text-brand-blue mb-2 text-balance">
+                                    <h1 className="text-5xl font-serif font-bold text-brand-blue mb-2 text-balance leading-tight">
                                         {currentTerm.subject}
                                     </h1>
                                     <div className="flex items-center gap-3 text-brand-blue/60">
@@ -130,22 +131,19 @@ export default function StudentDashboard() {
                                 disabled={isCheckedIn}
                                 variant={isCheckedIn ? "secondary" : "primary"}
                                 className={`w-full py-5 rounded-2xl font-bold text-lg transition-all shadow-lg ${isCheckedIn
-                                    ? 'bg-gray-100 text-gray-400 cursor-default'
+                                    ? 'bg-gray-200 text-gray-600 cursor-default'
                                     : 'bg-brand-blue text-white hover:scale-[1.02] active:scale-[0.98] shadow-brand-blue/20'
                                     }`}
                             >
                                 {isCheckedIn ? 'Već ste prijavljeni' : 'Prijavi se na termin'}
                             </Button>
-                        </div>
+                        </Card>
                     ) : (
-                        <div className="glass-morphism border border-brand-blue/20 rounded-[3rem] p-12 shadow-2xl shadow-brand-blue/10 bg-white/40 text-center">
+                        <Card className="p-12 text-center">
                             {/* Empty State */}
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-100 mb-8">
-                                <div className="h-2 w-2 rounded-full bg-gray-400" />
-                                <span className="text-xs font-bold text-gray-600 uppercase tracking-widest">
-                                    Nema aktivnih termina
-                                </span>
-                            </div>
+                            <Badge variant="gray" dot className="mb-8">
+                                Nema aktivnih termina
+                            </Badge>
 
                             <div className="max-w-md mx-auto space-y-4">
                                 <h2 className="text-4xl font-serif font-bold text-brand-blue">
@@ -156,15 +154,7 @@ export default function StudentDashboard() {
                                     Proverite svoj raspored za nadolazeće termine.
                                 </p>
                             </div>
-
-                            <Button
-                                variant="primary"
-                                disabled
-                                className="w-full py-5 rounded-2xl bg-brand-blue/30 text-white font-bold text-lg mt-10 cursor-not-allowed opacity-50"
-                            >
-                                Prijavi se na termin
-                            </Button>
-                        </div>
+                        </Card>
                     )}
                 </div>
             </section>
