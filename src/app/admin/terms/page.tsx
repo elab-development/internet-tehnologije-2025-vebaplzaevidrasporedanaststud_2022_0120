@@ -27,6 +27,22 @@ export default function AdminTermsPage() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("Da li ste sigurni da želite da obrišete ovaj termin?")) return;
+
+        try {
+            const res = await fetch(`/api/admin/terms/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setTerms(terms.filter(t => t.id !== id));
+            } else {
+                const data = await res.json();
+                alert(data.error || "Greška pri brisanju.");
+            }
+        } catch (err) {
+            alert("Greška u povezivanju sa serverom.");
+        }
+    };
+
     useEffect(() => {
         fetchTerms();
     }, []);
@@ -101,8 +117,17 @@ export default function AdminTermsPage() {
 
                                 {/* Actions */}
                                 <div className="flex justify-end gap-3">
-                                    <Button variant="outline" size="sm" className="rounded-xl">Izmeni</Button>
-                                    <Button variant="ghost" size="sm" className="rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50">Obriši</Button>
+                                    <Link href={`/admin/terms/${term.id}/edit`}>
+                                        <Button variant="outline" size="sm" className="rounded-xl">Izmeni</Button>
+                                    </Link>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50"
+                                        onClick={() => handleDelete(term.id)}
+                                    >
+                                        Obriši
+                                    </Button>
                                 </div>
                             </div>
                         </Card>
