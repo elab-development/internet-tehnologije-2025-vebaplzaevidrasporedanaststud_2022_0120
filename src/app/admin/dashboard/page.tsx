@@ -1,9 +1,7 @@
-"use client";
-
-import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
+import { DashboardStats } from "@/components/DashboardStats";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
     return (
         <main className="mx-auto max-w-7xl px-6 py-12">
             <header className="mb-12">
@@ -18,27 +16,7 @@ export default function AdminDashboard() {
                 </p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Stats cards will go here later */}
-                <Card className="p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 transition-all flex flex-col justify-between h-48">
-                    <div>
-                        <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-1">Ukupno termina</p>
-                        <h3 className="text-4xl font-serif font-bold text-brand-blue">--</h3>
-                    </div>
-                </Card>
-                <Card className="p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 transition-all flex flex-col justify-between h-48">
-                    <div>
-                        <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-1">Studenti</p>
-                        <h3 className="text-4xl font-serif font-bold text-brand-blue">--</h3>
-                    </div>
-                </Card>
-                <Card className="p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 transition-all flex flex-col justify-between h-48">
-                    <div>
-                        <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-1">Grupe</p>
-                        <h3 className="text-4xl font-serif font-bold text-brand-blue">--</h3>
-                    </div>
-                </Card>
-            </div>
+            <DashboardStats />
         </main>
     );
 }
