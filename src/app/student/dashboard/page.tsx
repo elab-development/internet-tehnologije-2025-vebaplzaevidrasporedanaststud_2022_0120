@@ -8,9 +8,22 @@ import { Badge } from "@/components/Badge";
 import { PageHeading } from "@/components/PageHeading";
 
 export default function StudentDashboard() {
-    const [data, setData] = useState<{ exists: boolean; term?: any; isCheckedIn?: boolean } | null>(null);
+    const [data, setData] = useState<{
+        exists: boolean;
+        term?: any;
+        isCheckedIn?: boolean;
+        isHoliday?: boolean;
+        holidayType?: string;
+    } | null>(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    const holidayTypeLabels: Record<string, string> = {
+        "KOLOKVIJUMSKA_NEDELJA": "Kolokvijumska nedelja",
+        "ISPITNI_ROK": "Ispitni rok",
+        "BEZ_AKTIVNOSTI": "Dan bez nastave",
+        "NERADNI_DAN": "Neradni dan"
+    };
 
     const fetchCurrentTerm = async () => {
         try {
@@ -57,6 +70,8 @@ export default function StudentDashboard() {
     const currentTerm = data?.term;
     const exists = data?.exists;
     const isCheckedIn = data?.isCheckedIn;
+    const isHoliday = data?.isHoliday;
+    const holidayType = data?.holidayType;
 
     return (
         <main className="min-h-screen bg-[#FDFCFB] selection:bg-brand-gold/30">
@@ -141,17 +156,22 @@ export default function StudentDashboard() {
                     ) : (
                         <Card className="p-12 text-center">
                             {/* Empty State */}
-                            <Badge variant="gray" dot className="mb-8">
-                                Nema aktivnih termina
+                            <Badge variant={isHoliday ? "blue" : "gray"} dot className="mb-8">
+                                {isHoliday ? 'Nastava se ne održava' : 'Nema aktivnih termina'}
                             </Badge>
 
                             <div className="max-w-md mx-auto space-y-4">
                                 <h2 className="text-4xl font-serif font-bold text-brand-blue">
-                                    Trenutno nema termina
+                                    {isHoliday && holidayType
+                                        ? `${holidayTypeLabels[holidayType] || holidayType}`
+                                        : 'Trenutno nema termina'
+                                    }
                                 </h2>
                                 <p className="text-brand-blue/60 font-medium leading-relaxed">
-                                    Prijavljivanje na termin je trenutno nedostupno.
-                                    Proverite svoj raspored za nadolazeće termine.
+                                    {isHoliday
+                                        ? 'Danas je neradni dan prema akademskom kalendaru. Odmorite se i uživajte!'
+                                        : 'Prijavljivanje na termin je trenutno nedostupno. Proverite svoj raspored za nadolazeće termine.'
+                                    }
                                 </p>
                             </div>
                         </Card>

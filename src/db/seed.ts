@@ -154,6 +154,7 @@ async function main() {
 
     await db.insert(schema.holidays).values([
         { date: "2025-01-07", type: "NERADNI_DAN", calendarId: calendarData[0].id },
+        { date: "2025-02-08", type: "NERADNI_DAN", calendarId: calendarData[0].id },
         { date: "2025-02-15", type: "NERADNI_DAN", calendarId: calendarData[0].id }
     ]);
 
