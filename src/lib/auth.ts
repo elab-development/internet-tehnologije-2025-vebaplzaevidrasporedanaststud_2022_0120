@@ -1,9 +1,8 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { JWTPayload } from "../shared/types";
+import { signToken as signJwt, verifyToken as verifyJwt } from "./jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
 const COOKIE_NAME = "auth_token";
 
 export async function hashPassword(password: string): Promise<string> {
@@ -15,15 +14,11 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export async function signToken(payload: JWTPayload): Promise<string> {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
+    return signJwt(payload);
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
-    try {
-        return jwt.verify(token, JWT_SECRET) as JWTPayload;
-    } catch {
-        return null;
-    }
+    return verifyJwt(token);
 }
 
 export async function setAuthCookie(token: string) {

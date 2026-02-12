@@ -1,17 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifyToken } from './lib/jwt';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const authToken = request.cookies.get('auth_token')?.value;
 
     // Initializing response
     const response = NextResponse.next();
 
-    // Security Headers 
-
     // Content Security Policy (CSP)
-    // - connect-src: allows self and any HTTPS API (for external APIs)
     const cspHeader = `
         default-src 'self';
         script-src 'self' 'unsafe-inline' 'unsafe-eval';
@@ -31,21 +29,55 @@ export function middleware(request: NextRequest) {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    // Route Protection 
     const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
-    const isProtectedPage = pathname.startsWith('/student') || pathname.startsWith('/admin');
+    const isStudentPage = pathname.startsWith('/student');
+    const isAdminPage = pathname.startsWith('/admin');
+    const isProtectedPage = isStudentPage || isAdminPage;
 
-    // Redirect unauthenticated users
+    // Handle Unauthenticated users
     if (isProtectedPage && !authToken) {
         const loginUrl = new URL('/login', request.url);
         return NextResponse.redirect(loginUrl);
     }
 
-    // Redirect already authenticated users away from login/register
-    //smanjuju se opcije hakera
-    if (isAuthPage && authToken) {
-       const dashboardUrl = new URL('/student/dashboard', request.url);
-        return NextResponse.redirect(dashboardUrl);
+    // Handle Authenticated users (RBAC & Redirects)
+    if (authToken) {
+        const payload = await verifyToken(authToken);
+
+        // If token is invalid, clear it and redirect to login
+        if (!payload) {
+            const loginUrl = new URL('/login', request.url);
+            const redirectResponse = NextResponse.redirect(loginUrl);
+            redirectResponse.cookies.delete('auth_token');
+            return redirectResponse;
+        }
+
+        // Redirect already authenticated users away from login/register
+        if (isAuthPage) {
+            const dashboardUrl = new URL(
+                payload.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard',
+                request.url
+            );
+            return NextResponse.redirect(dashboardUrl);
+        }
+
+        // RBAC Enforcement
+        if (isAdminPage && payload.role !== 'ADMIN') {
+            return NextResponse.redirect(new URL('/student/dashboard', request.url));
+        }
+
+        if (isStudentPage && payload.role !== 'STUDENT') {
+            return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+        }
+
+        // Handle root path redirects (/student -> /student/dashboard)
+        if (pathname === '/student' || pathname === '/student/') {
+            return NextResponse.redirect(new URL('/student/dashboard', request.url));
+        }
+
+        if (pathname === '/admin' || pathname === '/admin/') {
+            return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+        }
     }
 
     return response;
