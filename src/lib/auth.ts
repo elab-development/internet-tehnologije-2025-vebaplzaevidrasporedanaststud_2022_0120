@@ -30,8 +30,8 @@ export async function setAuthCookie(token: string) {
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: false, // Disabled as per user request (HTTP only)
+        sameSite: "lax", // Good balance for CSRF and compatibility
         path: "/",
         maxAge: 60 * 60 * 24, // 1 day
     });
