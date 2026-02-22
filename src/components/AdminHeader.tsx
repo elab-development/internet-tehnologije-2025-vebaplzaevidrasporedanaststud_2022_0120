@@ -48,7 +48,7 @@ export function AdminHeader() {
                         Termini
                     </Link>
                     <Link href="/admin/holidays" className={linkClass("/admin/holidays")}>
-                        Neradni dani
+                        Neradni dani (Kalendar)
                     </Link>
                     <Link href="/admin/groups" className={linkClass("/admin/groups")}>
                         Grupe
