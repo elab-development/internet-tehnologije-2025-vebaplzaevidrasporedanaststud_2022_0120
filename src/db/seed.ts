@@ -5,11 +5,16 @@ import bcrypt from "bcrypt";
 import { sql } from "drizzle-orm";
 
 async function main() {
-    console.log("Seeding database (UUID version)...");
+    console.log("Seeding database ...");
 
-    // brisanje starih podataka pre seedinga
+    // Provera da li već postoje podaci
+    const existingUsers = await db.select().from(schema.users).limit(1);
+    if (existingUsers.length > 0) {
+        console.log("Database already has data. Skipping seed to prevent data loss.");
+        return;
+    }
 
-    console.log("Cleaning old data...");
+    console.log("Cleaning old data (just in case)...");
     await db.execute(sql`TRUNCATE TABLE ${schema.attendance}, ${schema.terms}, ${schema.holidays}, ${schema.holidayCalendar}, ${schema.cabinets}, ${schema.subjects}, ${schema.students}, ${schema.studentGroups}, ${schema.users} CASCADE`);
 
 
@@ -149,6 +154,7 @@ async function main() {
 
     await db.insert(schema.holidays).values([
         { date: "2025-01-07", type: "NERADNI_DAN", calendarId: calendarData[0].id },
+        { date: "2025-02-08", type: "NERADNI_DAN", calendarId: calendarData[0].id },
         { date: "2025-02-15", type: "NERADNI_DAN", calendarId: calendarData[0].id }
     ]);
 

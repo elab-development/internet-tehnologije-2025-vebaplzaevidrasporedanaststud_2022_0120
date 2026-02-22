@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { terms, students, subjects, cabinets, attendance } from "@/db/schema";
+import { terms, students, subjects, cabinets, attendance, holidays } from "@/db/schema";
 import { eq, and, lte, gte } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 
@@ -22,6 +22,21 @@ export async function GET(req: NextRequest) {
 
         //Trenutno vreme
         const now = new Date();
+        const todayStr = now.toISOString().split('T')[0];
+
+        // Provera da li je danas neradni dan
+        const holidayMatch = await db.query.holidays.findFirst({
+            where: eq(holidays.date, todayStr)
+        });
+
+        if (holidayMatch) {
+            return NextResponse.json({
+                exists: false,
+                isHoliday: true,
+                holidayType: holidayMatch.type
+            });
+        }
+
         const days = ["NEDELJA", "PONEDELJAK", "UTORAK", "SREDA", "CETVRTAK", "PETAK", "SUBOTA"];
         const currentDay = days[now.getDay()] as any;
 
@@ -55,7 +70,6 @@ export async function GET(req: NextRequest) {
         }
 
         const term = activeTerm[0];
-        const todayStr = now.toISOString().split('T')[0];
 
         // da li je student već prijavljen
         const checkInRecord = await db.query.attendance.findFirst({

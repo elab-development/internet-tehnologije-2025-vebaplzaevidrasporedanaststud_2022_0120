@@ -1,9 +1,8 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { JWTPayload } from "../shared/types";
+import { signToken as signJwt, verifyToken as verifyJwt } from "./jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
 const COOKIE_NAME = "auth_token";
 
 export async function hashPassword(password: string): Promise<string> {
@@ -15,23 +14,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export async function signToken(payload: JWTPayload): Promise<string> {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
+    return signJwt(payload);
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
-    try {
-        return jwt.verify(token, JWT_SECRET) as JWTPayload;
-    } catch {
-        return null;
-    }
+    return verifyJwt(token);
 }
 
 export async function setAuthCookie(token: string) {
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: false, // Disabled as per user request (HTTP only)
+        sameSite: "lax", // Good balance for CSRF and compatibility
         path: "/",
         maxAge: 60 * 60 * 24, // 1 day
     });
