@@ -29,51 +29,30 @@ Aplikacija omogućava:
 •	prijavu i autentifikaciju korisnika.
 
 1.2. Funkcionalni zahtevi
-1.	Registracija studenta
-o	Student unosi podatke, pa na osnovu prezimena i godine dobije grupu za slušanje nastave (A2,C4,D1..), kreira se novi nalog.
-2.	Prijava korisnika
-o	Neulogovani korisnik unosi kredencijale, onda ako su ispravni, dobija rolu admina, za koju mu se prikazuje interfejs za admina, ili dobija rolu studenta i prikazuje mu se interfejs studenta. Nakon ovoga ostaje ulogovan i to potvrđuje JWT tokenom koji dobija.
-3.	Pregled osnovnih informacija o fakultetu
-o	Neulogovani korisnik može da vidi osnovne informacije o predmetima i kabinetima
-4.	Pregled rasporeda
-o	Student može da pregleda raspored po godini i prezimenu, odnosno grupi za slušanje.
-o	Aplikacija prikazuje nedeljni ili dnevni raspored.
- 
-5.	Pregled informacija o predmetu
-o	Klikom na termin student dobija detalje o predmetu, vremenu odrzavanja nastave,tip nastave(P ili V)  i učionici.
-6.	Administratorsko upravljanje rasporedom
-o	Administrator može da kreira, izmeni ili obriše termin nastave.
-o	Sistem validira da se termini ne preklapaju (učionica, grupa).
-7.	Integracija sa goodle kalendarom
-o	Sistem treba da obezbedi mogućnost studentu da svoj raspored nastave automatski sinhronizuje sa Google Kalendarom. Nakon što student da saglasnost i izvrši prijavu putem svog Google naloga, sve aktivnosti iz rasporeda nastave biće ubačene kao događaji u njegov Google kalendar.
-8.	Evidentiranje na nastavu studenta
-o	Student može da se prijavi putem dugmeta da oznaci da prisustvuje na casu ukoliko postoji termin .
-9.	Dodavanje neradnih dana
-o	Sistem omogućava administratoru da u aplikaciju unese neradne dane (državni praznici, fakultetski neradni dani, dani bez nastave). Nakon dodavanja, sistem automatski prilagođava raspored tako što uklanja održavanje nastave u tim terminima i obaveštava korisnike o promeni.Pregled statistike
-10.	Pregled statistike
-o	Sistem omogućava administratoru pregled statističkih podataka o upotrebi aplikacije, aktivnostima korisnika i rasporedu nastave. Statistika pomaže u evaluaciji rada sistema, otkrivanju opterećenja i eventualnih problema u organizaciji nastave.
+| Zahtev | Modul / Komponenta | API ruta | UI Ekran |
+| :--- | :--- | :--- | :--- |
+| Registracija studenta | api/auth | `/api/auth/student/register` | Register Page |
+| Prijava korisnika | api/auth | `/api/auth/user/login` | Login Page |
+| Pregled osnovnih informacija o fakultetu | api/info | `/api/faculty/info/get` | Home Page |
+| Pregled rasporeda | api/schedule | `/api/schedule/student/view` | Student Dashboard |
+| Pregled informacija o predmetu | api/course | `/api/courses/details/fetch/:id` | Course Detail |
+| Administratorsko upravljanje rasporedom | api/admin | `/api/admin/schedule/manage` | Admin Dashboard |
+| Integracija sa Google kalendarom | api/integration | `/api/integration/google/calendar/sync` | Student Dashboard |
+| Evidentiranje na nastavu studenta | api/attendance | `/api/attendance/student/check-in` | Student Dashboard |
+| Dodavanje neradnih dana | api/admin | `/api/admin/holidays/holiday/add` | Admin Dashboard |
+| Pregled statistike | api/stats | `/api/admin/usage/stats/report` | Admin Dashboard |
+
 
  
 1.3. Nefunkcionalni zahtevi
-Performanse
-•	Sistem mora odgovoriti na korisnički zahtev u proseku do 2 sekunde.
-•	Aplikacija mora podržati najmanje 500 istovremenih korisnika.
-Bezbednost
-•	Autentifikacija putem zaštićenog tokena.
-•	Lozinke se čuvaju hešovane i enkriptovane.
-•	Administrator ima poseban nivo pristupa koji je dodatno zaštićen.
-Pouzdanost i dostupnost
-•	Aplikacija mora biti dostupna minimum 99% vremena.
-•	Automatski backup baze na dnevnom nivou.
-Upotrebljivost
-•	Interfejs mora biti jednostavan i prilagođen mobilnim ekranima.
-•	Podržan je prikaz na srpskom i engleskom jeziku.
-Održavanje i skalabilnost
-•	Sistem mora omogućiti modularno dodavanje novih smerova.
-•	Kod treba biti dokumentovan i organizovan prema standardnim MVC principima.
-Portabilnost
-•	Aplikacija radi u svim modernim browserima: Chrome, Edge, Firefox, Safari.
-•	Responsivan dizajn omogućava rad na mobilnim uređajima.
+| Zahtev | Modul / Komponenta | API ruta | UI Ekran |
+| :--- | :--- | :--- | :--- |
+| Performanse | Backend / Infrastructure | N/A | Svi ekrani |
+| Bezbednost | Auth Module / Middleware | `/api/auth/*` | Login / Register |
+| Pouzdanost | Infrastructure / DB | N/A | Svi ekrani |
+| Upotrebljivost | Frontend / UI | N/A | Svi ekrani |
+| Održavanje | Architecture / Docs | N/A | N/A |
+
  
 1.4. Uloge nad sistemom i permisije
 Tabela uloga i permisija

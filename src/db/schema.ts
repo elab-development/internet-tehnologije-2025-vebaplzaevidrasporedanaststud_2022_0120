@@ -103,7 +103,9 @@ export const holidays = pgTable("holidays", {
     date: date("date").notNull(),
     type: holidayTypeEnum("type").notNull(),
     calendarId: uuid("calendar_id").notNull().references(() => holidayCalendar.id),
-});
+}, (table) => ({
+    unq: uniqueIndex("holidays_date_idx").on(table.date),
+}));
 
 // RELATIONS
 

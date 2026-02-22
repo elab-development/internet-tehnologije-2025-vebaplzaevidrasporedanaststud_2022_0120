@@ -19,7 +19,7 @@ export async function GET(
         const term = await db.query.terms.findFirst({
             where: eq(terms.id, id),
         });
-
+        // ovo je test 
         if (!term) {
             return NextResponse.json({ error: "Termin nije pronađen." }, { status: 404 });
         }
