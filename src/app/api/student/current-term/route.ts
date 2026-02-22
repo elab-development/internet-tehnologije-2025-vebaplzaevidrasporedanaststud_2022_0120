@@ -24,16 +24,17 @@ export async function GET(req: NextRequest) {
         const now = new Date();
         const todayStr = now.toISOString().split('T')[0];
 
-        // Provera da li je danas neradni dan
+        // Provera da li je danas neradni dan (ukljucujuci vikende)
+        const isWeekend = now.getDay() === 0 || now.getDay() === 6;
         const holidayMatch = await db.query.holidays.findFirst({
             where: eq(holidays.date, todayStr)
         });
 
-        if (holidayMatch) {
+        if (isWeekend || holidayMatch) {
             return NextResponse.json({
                 exists: false,
                 isHoliday: true,
-                holidayType: holidayMatch.type
+                holidayType: isWeekend ? "NERADNI_DAN" : holidayMatch?.type
             });
         }
 

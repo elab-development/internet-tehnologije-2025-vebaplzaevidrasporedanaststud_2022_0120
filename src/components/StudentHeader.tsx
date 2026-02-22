@@ -47,7 +47,7 @@ export function StudentHeader({ activePage }: StudentHeaderProps) {
                     <Link href="/student/schedule" className={linkClass("raspored")}>
                         Raspored
                     </Link>
-                    <button className={linkClass("kalendar")}>Kalendar</button>
+                    <Link href="/student/calendar" className={linkClass("kalendar")}>Kalendar</Link>
                     <button className={linkClass("profil")}>Profil</button>
                     <button
                         onClick={handleLogout}
