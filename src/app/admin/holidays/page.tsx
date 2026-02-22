@@ -154,6 +154,12 @@ export default function HolidaysPage() {
                             subtitle="Upravljajte praznicima i akademskim kalendarom."
                         />
                         <div className="flex items-center gap-3">
+                            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-brand-blue/5 rounded-2xl border border-brand-blue/10">
+                                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                                <span className="text-xs font-bold text-brand-blue/60 uppercase tracking-wider">
+                                    Vikendi su podrazumevano neradni
+                                </span>
+                            </div>
                             <div className="flex bg-brand-blue/5 p-1 rounded-2xl mr-4">
                                 <button
                                     onClick={() => setViewMode("calendar")}
