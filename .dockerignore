@@ -13,3 +13,10 @@ README.md
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# testing
+tests
+playwright.config.ts
+vitest.config.ts
+playwright-report
+test-results
