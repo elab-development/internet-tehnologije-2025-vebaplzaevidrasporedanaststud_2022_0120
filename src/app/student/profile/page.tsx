@@ -140,25 +140,25 @@ export default function StudentProfilePage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* First Name — readonly */}
+                                    {/* First Name */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Ime</p>
                                         <p className="text-xl font-bold text-brand-blue">{profile.firstName}</p>
                                     </div>
 
-                                    {/* Last Name — readonly */}
+                                    {/* Last Name  */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Prezime</p>
                                         <p className="text-xl font-bold text-brand-blue">{profile.lastName}</p>
                                     </div>
 
-                                    {/* Email — readonly */}
+                                    {/* Email  */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Email</p>
                                         <p className="text-xl font-bold text-brand-blue">{profile.email}</p>
                                     </div>
 
-                                    {/* Username — editable */}
+                                    {/* Username */}
                                     <div className="col-span-1 md:col-span-2 flex items-center justify-between p-6 rounded-2xl bg-brand-blue/[0.03] border border-brand-blue/10 group transition-all hover:bg-brand-blue/[0.05]">
                                         <div>
                                             <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Korisničko ime</p>
