@@ -180,8 +180,8 @@ export default function StudentProfilePage() {
                                                 size="sm"
                                                 className="rounded-xl border-brand-blue/20 text-brand-blue font-bold px-4 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all shadow-sm group-hover:scale-105 active:scale-95 flex items-center gap-2"
                                             >
-                                                <span>✏️</span>
-                                                Promeni korisničko ime
+
+                                                Promeni
                                             </Button>
                                         )}
                                     </div>
