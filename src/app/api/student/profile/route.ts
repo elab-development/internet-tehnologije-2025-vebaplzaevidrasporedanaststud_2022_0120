@@ -52,32 +52,18 @@ export async function PATCH(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { firstName, lastName, email } = body;
+        const { firstName, lastName } = body;
 
-        if (!firstName || !lastName || !email) {
+        if (!firstName || !lastName) {
             return NextResponse.json(
-                { error: "Ime, prezime i email su obavezni." },
+                { error: "Ime i prezime su obavezni." },
                 { status: 400 }
-            );
-        }
-
-        // Check if email is taken by another user
-        const emailConflict = await db
-            .select({ id: users.id })
-            .from(users)
-            .where(eq(users.email, email))
-            .limit(1);
-
-        if (emailConflict.length > 0 && emailConflict[0].id !== session.userId) {
-            return NextResponse.json(
-                { error: "Email adresa je već u upotrebi." },
-                { status: 409 }
             );
         }
 
         await db
             .update(users)
-            .set({ firstName, lastName, email })
+            .set({ firstName, lastName })
             .where(eq(users.id, session.userId));
 
         return NextResponse.json({ success: true, message: "Podaci su uspešno izmenjeni." });

@@ -32,7 +32,6 @@ export default function StudentProfilePage() {
     // Editable fields
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
 
     const fetchProfile = async () => {
         try {
@@ -42,7 +41,6 @@ export default function StudentProfilePage() {
                 setProfile(data);
                 setFirstName(data.firstName);
                 setLastName(data.lastName);
-                setEmail(data.email);
             } else {
                 setError(data.error || "Greška pri učitavanju podataka.");
             }
@@ -66,7 +64,7 @@ export default function StudentProfilePage() {
             const res = await fetch("/api/student/profile", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, email }),
+                body: JSON.stringify({ firstName, lastName }),
             });
             const data = await res.json();
 
@@ -88,7 +86,6 @@ export default function StudentProfilePage() {
         if (profile) {
             setFirstName(profile.firstName);
             setLastName(profile.lastName);
-            setEmail(profile.email);
         }
         setEditing(false);
         setError("");
@@ -187,19 +184,10 @@ export default function StudentProfilePage() {
                                         )}
                                     </div>
 
-                                    {/* Email */}
+                                    {/* Email — readonly */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Email</p>
-                                        {editing ? (
-                                            <Input
-                                                type="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="Unesite email"
-                                            />
-                                        ) : (
-                                            <p className="text-xl font-bold text-brand-blue">{profile.email}</p>
-                                        )}
+                                        <p className="text-xl font-bold text-brand-blue">{profile.email}</p>
                                     </div>
 
                                     {/* Username — readonly */}
