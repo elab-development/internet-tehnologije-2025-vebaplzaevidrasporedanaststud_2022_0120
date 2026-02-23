@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { studentGroups } from "@/db/schema";
+import { studentGroups, students } from "@/db/schema";
 import { getAuthSession } from "@/lib/auth";
+import { eq, sql } from "drizzle-orm";
 
 export async function GET() {
     try {
@@ -10,7 +11,20 @@ export async function GET() {
             return NextResponse.json({ error: "Neautorizovan pristup." }, { status: 401 });
         }
 
-        const allGroups = await db.select().from(studentGroups).orderBy(studentGroups.name);
+        const allGroups = await db
+            .select({
+                id: studentGroups.id,
+                name: studentGroups.name,
+                studyProgram: studentGroups.studyProgram,
+                yearOfStudy: studentGroups.yearOfStudy,
+                alphabetHalf: studentGroups.alphabetHalf,
+                studentCount: sql<number>`count(${students.userId})`.as("student_count"),
+            })
+            .from(studentGroups)
+            .leftJoin(students, eq(students.groupId, studentGroups.id))
+            .groupBy(studentGroups.id)
+            .orderBy(studentGroups.name);
+
         return NextResponse.json(allGroups);
     } catch (error) {
         return NextResponse.json(
