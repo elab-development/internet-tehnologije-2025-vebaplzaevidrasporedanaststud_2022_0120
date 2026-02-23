@@ -159,27 +159,30 @@ export default function StudentProfilePage() {
                                     </div>
 
                                     {/* Username — editable */}
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest">Korisničko ime</p>
-                                            {!editing && (
-                                                <button
-                                                    onClick={() => { setEditing(true); setSuccess(""); setError(""); }}
-                                                    className="flex items-center gap-1 text-[10px] font-bold text-brand-blue/50 hover:text-brand-blue border border-brand-blue/20 hover:border-brand-blue/50 rounded-lg px-2 py-0.5 transition-all hover:bg-brand-blue/5"
-                                                    title="Promeni korisničko ime"
-                                                >
-                                                    ✏ Promeni
-                                                </button>
+                                    <div className="col-span-1 md:col-span-2 flex items-center justify-between p-6 rounded-2xl bg-brand-blue/[0.03] border border-brand-blue/10 group transition-all hover:bg-brand-blue/[0.05]">
+                                        <div>
+                                            <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Korisničko ime</p>
+                                            {editing ? (
+                                                <Input
+                                                    value={username}
+                                                    onChange={(e) => setUsername(e.target.value)}
+                                                    placeholder="Unesite korisničko ime"
+                                                    className="w-full md:w-80 bg-white"
+                                                />
+                                            ) : (
+                                                <p className="text-xl font-bold text-brand-blue tracking-tight">{profile.username}</p>
                                             )}
                                         </div>
-                                        {editing ? (
-                                            <Input
-                                                value={username}
-                                                onChange={(e) => setUsername(e.target.value)}
-                                                placeholder="Unesite korisničko ime"
-                                            />
-                                        ) : (
-                                            <p className="text-xl font-bold text-brand-blue">{profile.username}</p>
+                                        {!editing && (
+                                            <Button
+                                                onClick={() => { setEditing(true); setSuccess(""); setError(""); }}
+                                                variant="outline"
+                                                size="sm"
+                                                className="rounded-xl border-brand-blue/20 text-brand-blue font-bold px-4 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all shadow-sm group-hover:scale-105 active:scale-95 flex items-center gap-2"
+                                            >
+                                                <span>✏️</span>
+                                                Promeni korisničko ime
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
