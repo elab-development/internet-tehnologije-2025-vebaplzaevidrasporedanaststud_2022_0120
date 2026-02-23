@@ -30,8 +30,7 @@ export default function StudentProfilePage() {
     const [success, setSuccess] = useState("");
 
     // Editable fields
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
 
     const fetchProfile = async () => {
         try {
@@ -39,8 +38,7 @@ export default function StudentProfilePage() {
             const data = await res.json();
             if (res.ok) {
                 setProfile(data);
-                setFirstName(data.firstName);
-                setLastName(data.lastName);
+                setUsername(data.username);
             } else {
                 setError(data.error || "Greška pri učitavanju podataka.");
             }
@@ -64,7 +62,7 @@ export default function StudentProfilePage() {
             const res = await fetch("/api/student/profile", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName }),
+                body: JSON.stringify({ username }),
             });
             const data = await res.json();
 
@@ -84,8 +82,7 @@ export default function StudentProfilePage() {
 
     const handleCancel = () => {
         if (profile) {
-            setFirstName(profile.firstName);
-            setLastName(profile.lastName);
+            setUsername(profile.username);
         }
         setEditing(false);
         setError("");
@@ -156,32 +153,16 @@ export default function StudentProfilePage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* First Name */}
+                                    {/* First Name — readonly */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Ime</p>
-                                        {editing ? (
-                                            <Input
-                                                value={firstName}
-                                                onChange={(e) => setFirstName(e.target.value)}
-                                                placeholder="Unesite ime"
-                                            />
-                                        ) : (
-                                            <p className="text-xl font-bold text-brand-blue">{profile.firstName}</p>
-                                        )}
+                                        <p className="text-xl font-bold text-brand-blue">{profile.firstName}</p>
                                     </div>
 
-                                    {/* Last Name */}
+                                    {/* Last Name — readonly */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Prezime</p>
-                                        {editing ? (
-                                            <Input
-                                                value={lastName}
-                                                onChange={(e) => setLastName(e.target.value)}
-                                                placeholder="Unesite prezime"
-                                            />
-                                        ) : (
-                                            <p className="text-xl font-bold text-brand-blue">{profile.lastName}</p>
-                                        )}
+                                        <p className="text-xl font-bold text-brand-blue">{profile.lastName}</p>
                                     </div>
 
                                     {/* Email — readonly */}
@@ -190,10 +171,18 @@ export default function StudentProfilePage() {
                                         <p className="text-xl font-bold text-brand-blue">{profile.email}</p>
                                     </div>
 
-                                    {/* Username — readonly */}
+                                    {/* Username — editable */}
                                     <div>
                                         <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Korisničko ime</p>
-                                        <p className="text-xl font-bold text-brand-blue">{profile.username}</p>
+                                        {editing ? (
+                                            <Input
+                                                value={username}
+                                                onChange={(e) => setUsername(e.target.value)}
+                                                placeholder="Unesite korisničko ime"
+                                            />
+                                        ) : (
+                                            <p className="text-xl font-bold text-brand-blue">{profile.username}</p>
+                                        )}
                                     </div>
                                 </div>
 

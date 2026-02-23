@@ -52,18 +52,32 @@ export async function PATCH(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { firstName, lastName } = body;
+        const { username } = body;
 
-        if (!firstName || !lastName) {
+        if (!username || username.trim().length < 3) {
             return NextResponse.json(
-                { error: "Ime i prezime su obavezni." },
+                { error: "Korisničko ime mora imati bar 3 karaktera." },
                 { status: 400 }
+            );
+        }
+
+        // Check if username is taken by another user
+        const usernameConflict = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.username, username.trim()))
+            .limit(1);
+
+        if (usernameConflict.length > 0 && usernameConflict[0].id !== session.userId) {
+            return NextResponse.json(
+                { error: "Korisničko ime je već zauzeto." },
+                { status: 409 }
             );
         }
 
         await db
             .update(users)
-            .set({ firstName, lastName })
+            .set({ username: username.trim() })
             .where(eq(users.id, session.userId));
 
         return NextResponse.json({ success: true, message: "Podaci su uspešno izmenjeni." });
