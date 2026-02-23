@@ -109,24 +109,11 @@ export default function StudentProfilePage() {
                 <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl -z-10" />
 
                 <div className="mx-auto max-w-4xl px-6 w-full">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                    <div className="flex flex-col mb-12">
                         <PageHeading
                             title="Moj Profil"
-                            subtitle="Pregledajte i izmenite svoje lične podatke."
+                            subtitle="Pregledajte i promenite korisničko ime."
                         />
-                        {!editing && (
-                            <Button
-                                onClick={() => {
-                                    setEditing(true);
-                                    setSuccess("");
-                                    setError("");
-                                }}
-                                variant="primary"
-                                className="rounded-xl px-8 py-4 font-bold shadow-lg shadow-brand-blue/10 hover:scale-105 active:scale-95 transition-all"
-                            >
-                                Izmeni podatke
-                            </Button>
-                        )}
                     </div>
 
                     {error && (
@@ -173,7 +160,18 @@ export default function StudentProfilePage() {
 
                                     {/* Username — editable */}
                                     <div>
-                                        <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest mb-2">Korisničko ime</p>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <p className="text-xs font-bold text-brand-blue/40 uppercase tracking-widest">Korisničko ime</p>
+                                            {!editing && (
+                                                <button
+                                                    onClick={() => { setEditing(true); setSuccess(""); setError(""); }}
+                                                    className="flex items-center gap-1 text-[10px] font-bold text-brand-blue/50 hover:text-brand-blue border border-brand-blue/20 hover:border-brand-blue/50 rounded-lg px-2 py-0.5 transition-all hover:bg-brand-blue/5"
+                                                    title="Promeni korisničko ime"
+                                                >
+                                                    ✏ Promeni
+                                                </button>
+                                            )}
+                                        </div>
                                         {editing ? (
                                             <Input
                                                 value={username}
