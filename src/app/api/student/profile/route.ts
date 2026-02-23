@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { users, students, studentGroups } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { users, students, studentGroups, attendance, terms, subjects, holidays } from "@/db/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
+import { countHeldTerms } from "@/lib/attendance";
 
-// GET /api/student/profile — returns logged-in student's full profile
+// GET /api/student/profile — returns logged-in student's full profile including attendance stats
 export async function GET() {
     try {
         const session = await getAuthSession();
@@ -36,7 +37,71 @@ export async function GET() {
             return NextResponse.json({ error: "Student nije pronađen." }, { status: 404 });
         }
 
-        return NextResponse.json(result[0]);
+        const profile: any = result[0];
+
+        // Fetch attendance stats if group is assigned
+        if (profile.groupId) {
+            const studentTerms = await db
+                .select({
+                    id: terms.id,
+                    dayOfWeek: terms.dayOfWeek,
+                    subjectId: terms.subjectId,
+                    subjectTitle: subjects.title,
+                    type: terms.type,
+                })
+                .from(terms)
+                .innerJoin(subjects, eq(subjects.id, terms.subjectId))
+                .where(eq(terms.groupId, profile.groupId));
+
+            const studentAttendance = await db
+                .select()
+                .from(attendance)
+                .where(eq(attendance.studentId, session.userId));
+
+            const allHolidays = await db
+                .select({ date: holidays.date })
+                .from(holidays);
+
+            const holidayDates = allHolidays.map(h => h.date);
+
+            // Calculation parameters
+            const SEMESTER_START = new Date("2026-02-16"); // Adjust if needed
+            const TODAY = new Date();
+
+            const statsMap: Record<string, {
+                subjectTitle: string,
+                presence: number,
+                held: number,
+                absence: number
+            }> = {};
+
+            for (const term of studentTerms) {
+                if (!statsMap[term.subjectId]) {
+                    statsMap[term.subjectId] = {
+                        subjectTitle: term.subjectTitle,
+                        presence: 0,
+                        held: 0,
+                        absence: 0
+                    };
+                }
+
+                const heldCount = countHeldTerms(term.dayOfWeek, SEMESTER_START, TODAY, holidayDates);
+                const presenceCount = studentAttendance.filter(a => a.termId === term.id).length;
+
+                statsMap[term.subjectId].held += heldCount;
+                statsMap[term.subjectId].presence += presenceCount;
+            }
+
+            // Calculate absences and convert to array
+            profile.subjectStats = Object.values(statsMap).map(stat => ({
+                ...stat,
+                absence: Math.max(0, stat.held - stat.presence)
+            }));
+        } else {
+            profile.subjectStats = [];
+        }
+
+        return NextResponse.json(profile);
     } catch (error) {
         console.error("Profile GET error:", error);
         return NextResponse.json({ error: "Greška pri učitavanju podataka." }, { status: 500 });
