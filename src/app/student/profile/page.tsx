@@ -8,6 +8,13 @@ import { PageHeading } from "@/components/PageHeading";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 
+interface SubjectStat {
+    subjectTitle: string;
+    presence: number;
+    held: number;
+    absence: number;
+}
+
 interface Profile {
     id: string;
     username: string;
@@ -19,6 +26,7 @@ interface Profile {
     yearOfStudy: number;
     pictureUrl: string | null;
     groupName: string | null;
+    subjectStats: SubjectStat[];
 }
 
 export default function StudentProfilePage() {
@@ -241,6 +249,55 @@ export default function StudentProfilePage() {
                                             <p className="text-brand-blue/40 italic">Nije dodeljena</p>
                                         )}
                                     </div>
+                                </div>
+                            </Card>
+                            {/* Attendance Stats Card */}
+                            <Card className="p-10 mb-20">
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="h-2 w-10 bg-brand-gold rounded-full" />
+                                    <h2 className="text-2xl font-bold text-brand-blue">Statistika prisustva</h2>
+                                    <Badge variant="blue">Do danas</Badge>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-brand-blue/10">
+                                                <th className="pb-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest">Predmet</th>
+                                                <th className="pb-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest text-center">Prisustva</th>
+                                                <th className="pb-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest text-center">Odsustva</th>
+                                                <th className="pb-4 text-xs font-bold text-brand-blue/40 uppercase tracking-widest text-center">Ukupno održano</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-brand-blue/5">
+                                            {profile.subjectStats && profile.subjectStats.length > 0 ? (
+                                                profile.subjectStats.map((stat, idx) => (
+                                                    <tr key={idx} className="group hover:bg-brand-blue/[0.01] transition-colors">
+                                                        <td className="py-4 font-bold text-brand-blue">{stat.subjectTitle}</td>
+                                                        <td className="py-4 text-center">
+                                                            <span className="inline-flex items-center justify-center min-w-[32px] px-2 py-1 rounded-lg bg-green-50 text-green-700 font-bold text-sm">
+                                                                {stat.presence}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-4 text-center">
+                                                            <span className="inline-flex items-center justify-center min-w-[32px] px-2 py-1 rounded-lg bg-red-50 text-red-700 font-bold text-sm">
+                                                                {stat.absence}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-4 text-center font-medium text-brand-blue/40">
+                                                            {stat.held}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={4} className="py-10 text-center text-brand-blue/40 italic">
+                                                        Nema dostupnih podataka o prisustvu.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </Card>
                         </div>
