@@ -34,7 +34,7 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška pri učitavanju termina.");
             }
-        } catch (err) {
+        } catch (_err) {
             setError("Greška u povezivanju sa serverom.");
         }
     };
@@ -62,7 +62,7 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška prilikom prijave.");
             }
-        } catch (err) {
+        } catch (_err) {
             setError("Greška u povezivanju sa serverom.");
         }
     };

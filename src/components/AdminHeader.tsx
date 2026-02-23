@@ -4,9 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-interface AdminHeaderProps {
-    // We can add props if needed, but for now we follow StudentHeader pattern
-}
+type AdminHeaderProps = object;
 
 export function AdminHeader() {
     const router = useRouter();
@@ -20,7 +18,7 @@ export function AdminHeader() {
             } else {
                 alert("Greška prilikom odjavljivanja.");
             }
-        } catch (err) {
+        } catch (_err) {
             alert("Greška u povezivanju sa serverom.");
         }
     };

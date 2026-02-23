@@ -4,10 +4,8 @@ import {
     text,
     varchar,
     integer,
-    timestamp,
     pgEnum,
     time,
-    primaryKey,
     date,
     uniqueIndex
 } from "drizzle-orm/pg-core";

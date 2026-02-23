@@ -34,7 +34,7 @@ export function NewHolidayForm({ onSuccess, onCancel }: NewHolidayFormProps) {
                 const data = await res.json();
                 setError(data.error || "Greška prilikom čuvanja.");
             }
-        } catch (err) {
+        } catch (_err) {
             setError("Greška u povezivanju sa serverom.");
         } finally {
             setLoading(false);

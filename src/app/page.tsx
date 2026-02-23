@@ -20,7 +20,7 @@ async function getCabinets() {
     const res = await fetch(`${apiUrl}/api/cabinets`, { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
-  } catch (err) {
+  } catch (_err) {
     return [];
   }
 }
@@ -31,7 +31,7 @@ async function getSubjects() {
     const res = await fetch(`${apiUrl}/api/subjects`, { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
-  } catch (err) {
+  } catch (_err) {
     return [];
   }
 }
@@ -93,7 +93,7 @@ export default async function HomePage() {
 
               {subjects.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {subjects.map((subject: any) => (
+                  {subjects.map((subject: { id: string, espb: number, title: string, description: string }) => (
                     <Card key={subject.id} className="group p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 hover:shadow-2xl hover:shadow-brand-gold/5 transition-all">
                       <div className="flex justify-between items-start mb-6">
                         <Badge variant="blue">
@@ -125,7 +125,7 @@ export default async function HomePage() {
 
                 {cabinets.length > 0 ? (
                   <div className="space-y-4">
-                    {cabinets.map((cabinet: any) => (
+                    {cabinets.map((cabinet: { id: string, type: string, number: string, capacity: number }) => (
                       <Card key={cabinet.id} variant="primary" className="p-6 group hover:bg-brand-gold transition-colors rounded-2xl">
                         <div className="flex justify-between items-center">
                           <div>

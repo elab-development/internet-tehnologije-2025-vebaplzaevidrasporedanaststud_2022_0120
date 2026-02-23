@@ -78,7 +78,7 @@ async function main() {
     console.log("Inserting groups...");
     const studyPrograms = ["Informacioni sistemi", "Menadzment"] as const;
     const yearLetters = ["A", "B", "C", "D"];
-    const groupEntries: any[] = [];
+    const groupEntries: (typeof schema.studentGroups.$inferInsert)[] = [];
 
     for (let yearIdx = 0; yearIdx < 4; yearIdx++) {
         const year = yearIdx + 1;
@@ -135,7 +135,7 @@ async function main() {
             studentDetails.push({
                 userId: user.id,
                 indexNumber: s.index,
-                studyProgram: s.sp as any,
+                studyProgram: s.sp as (typeof schema.studyProgramEnum.enumValues[number]),
                 yearOfStudy: s.year,
                 groupId: groupId
             });

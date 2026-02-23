@@ -36,7 +36,7 @@ export default function SchedulePage() {
                 } else {
                     setError(result.error || "Greška pri učitavanju rasporeda.");
                 }
-            } catch (err) {
+            } catch (_err) {
                 setError("Greška u povezivanju sa serverom.");
             }
         };

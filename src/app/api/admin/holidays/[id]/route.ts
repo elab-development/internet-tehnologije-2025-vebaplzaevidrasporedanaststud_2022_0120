@@ -6,7 +6,7 @@ import { getAuthSession } from "@/lib/auth";
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getAuthSession();
@@ -14,7 +14,7 @@ export async function DELETE(
             return NextResponse.json({ error: "Neautorizovan pristup." }, { status: 401 });
         }
 
-        const { id } = params;
+        const { id } = await params;
 
         await db.delete(holidays).where(eq(holidays.id, id));
 

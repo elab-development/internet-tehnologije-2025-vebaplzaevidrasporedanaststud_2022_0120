@@ -20,7 +20,7 @@ export function StudentHeader({ activePage }: StudentHeaderProps) {
             } else {
                 alert("Greška prilikom odjavljivanja.");
             }
-        } catch (err) {
+        } catch (_err) {
             alert("Greška u povezivanju sa serverom.");
         }
     };
