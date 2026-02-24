@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { users, students, studentGroups, attendance, terms, subjects, holidays } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 import { countHeldTerms } from "@/lib/attendance";
 
@@ -37,7 +37,7 @@ export async function GET() {
             return NextResponse.json({ error: "Student nije pronađen." }, { status: 404 });
         }
 
-        const profile: any = result[0];
+        const profile = result[0] as any; // Temporary cast to handle dynamic subjectStats
 
         // Fetch attendance stats if group is assigned
         if (profile.groupId) {

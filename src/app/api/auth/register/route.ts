@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         }, { status: 201 });
 
     } catch (error) {
-        const err = error as any;
+        const err = error as { code?: string, detail?: string, cause?: { code?: string, detail?: string } };
         const pgError = err.code === '23505' ? err : (err.cause?.code === '23505' ? err.cause : null);
 
         if (pgError) {

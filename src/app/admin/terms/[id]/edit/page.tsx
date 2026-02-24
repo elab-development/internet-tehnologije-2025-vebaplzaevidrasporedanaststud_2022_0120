@@ -81,7 +81,7 @@ export default function EditTermPage({ params }: { params: Promise<{ id: string 
                 });
 
             } catch (err) {
-                const errorObj = err as any;
+                const errorObj = err as Error;
                 setError(errorObj.message || "Greška pri učitavanju podataka.");
             } finally {
                 setInitialLoading(false);
