@@ -2,7 +2,11 @@ import { SignJWT, jwtVerify } from 'jose';
 import { JWTPayload } from '../shared/types';
 
 export async function signToken(payload: JWTPayload): Promise<string> {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret");
+    const secretStr = process.env.JWT_SECRET;
+    if (!secretStr) {
+        throw new Error("JWT_SECRET environment variable is not set");
+    }
+    const secret = new TextEncoder().encode(secretStr);
     return new SignJWT({ ...payload })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
@@ -12,7 +16,11 @@ export async function signToken(payload: JWTPayload): Promise<string> {
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret");
+        const secretStr = process.env.JWT_SECRET;
+        if (!secretStr) {
+            throw new Error("JWT_SECRET environment variable is not set");
+        }
+        const secret = new TextEncoder().encode(secretStr);
         const { payload } = await jwtVerify(token, secret);
         return payload as unknown as JWTPayload;
     } catch {
