@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { terms, students, subjects, cabinets, attendance, holidays } from "@/db/schema";
 import { eq, and, lte, gte } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
         const session = await getAuthSession();
         if (!session || session.role !== "STUDENT") {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
         }
 
         const days = ["NEDELJA", "PONEDELJAK", "UTORAK", "SREDA", "CETVRTAK", "PETAK", "SUBOTA"];
-        const currentDay = days[now.getDay()] as any;
+        const currentDay = days[now.getDay()] as "PONEDELJAK" | "UTORAK" | "SREDA" | "CETVRTAK" | "PETAK" | "SUBOTA" | "NEDELJA";
 
         const currentTImeStr = now.toTimeString().split(' ')[0]; // npr "13:52:57"
 

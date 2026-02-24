@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { holidays, holidayCalendar } from "@/db/schema";
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 
 export async function GET() {

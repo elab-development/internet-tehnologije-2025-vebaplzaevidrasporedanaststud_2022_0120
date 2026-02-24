@@ -5,9 +5,10 @@ import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import Link from "next/link";
+import { Term } from "@/shared/types";
 
 export default function AdminTermsPage() {
-    const [terms, setTerms] = useState<any[]>([]);
+    const [terms, setTerms] = useState<Term[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -20,7 +21,7 @@ export default function AdminTermsPage() {
             } else {
                 setError(data.error || "Greška pri učitavanju termina.");
             }
-        } catch (err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         } finally {
             setLoading(false);
@@ -38,7 +39,7 @@ export default function AdminTermsPage() {
                 const data = await res.json();
                 alert(data.error || "Greška pri brisanju.");
             }
-        } catch (err) {
+        } catch {
             alert("Greška u povezivanju sa serverom.");
         }
     };
