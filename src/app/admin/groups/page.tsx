@@ -36,7 +36,7 @@ export default function AdminGroupsPage() {
                 } else {
                     setError(data.error || "Greška pri učitavanju grupa.");
                 }
-            } catch (_err) {
+            } catch {
                 setError("Greška u povezivanju sa serverom.");
             } finally {
                 setLoading(false);

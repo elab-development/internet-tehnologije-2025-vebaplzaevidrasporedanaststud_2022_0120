@@ -27,3 +27,40 @@ export interface Student extends User {
     pictureUrl?: string;
     groupId?: string;
 }
+
+export interface Subject {
+    id: string;
+    title: string;
+    espb: number;
+    description?: string;
+}
+
+export interface Cabinet {
+    id: string;
+    number: string;
+    capacity: number;
+    type: CabinetType;
+}
+
+export interface StudentGroup {
+    id: string;
+    name: string;
+    studyProgram: string;
+    yearOfStudy: number;
+    alphabetHalf: number;
+}
+
+export interface Term {
+    id: string;
+    dayOfWeek: DayOfWeek;
+    startTime: string;
+    endTime: string;
+    type: SessionType;
+    subjectId: string;
+    cabinetId: string;
+    groupId: string;
+    // Joined fields often used in UI
+    subject?: string;
+    cabinet?: string;
+    group?: string;
+}
