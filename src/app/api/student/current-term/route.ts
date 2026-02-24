@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { terms, students, subjects, cabinets, attendance, holidays } from "@/db/schema";
 import { eq, and, lte, gte } from "drizzle-orm";

@@ -6,7 +6,7 @@ export async function GET() {
     try {
         const allSubjects = await db.select().from(subjects);
         return NextResponse.json(allSubjects);
-    } catch (error) {
+    } catch {
         return NextResponse.json(
             { error: "Neuspešno dohvatanje predmeta." },
             { status: 500 }

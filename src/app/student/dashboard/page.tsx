@@ -5,7 +5,6 @@ import { Button } from "@/components/Button";
 import { StudentHeader } from "@/components/StudentHeader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
-import { PageHeading } from "@/components/PageHeading";
 
 export default function StudentDashboard() {
     const [data, setData] = useState<{
@@ -42,7 +41,7 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška pri učitavanju termina.");
             }
-        } catch (_err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         }
     };
@@ -70,7 +69,7 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška prilikom prijave.");
             }
-        } catch (_err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         }
     };

@@ -20,7 +20,7 @@ async function getCabinets() {
     const res = await fetch(`${apiUrl}/api/cabinets`, { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
-  } catch (_err) {
+  } catch {
     return [];
   }
 }
@@ -31,7 +31,7 @@ async function getSubjects() {
     const res = await fetch(`${apiUrl}/api/subjects`, { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
-  } catch (_err) {
+  } catch {
     return [];
   }
 }

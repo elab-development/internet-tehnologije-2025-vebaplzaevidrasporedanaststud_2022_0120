@@ -40,7 +40,7 @@ function LoginContent() {
             } else {
                 setError(data.error || "Prijava nije uspela.");
             }
-        } catch (err) {
+        } catch {
             setError("Došlo je do greške na mreži.");
         } finally {
             setLoading(false);

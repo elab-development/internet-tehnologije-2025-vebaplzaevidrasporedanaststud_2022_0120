@@ -46,7 +46,7 @@ export default function RegisterPage() {
             } else {
                 setError(data.error || "Registracija nije uspela.");
             }
-        } catch (err) {
+        } catch {
             setError("Došlo je do greške na mreži.");
         } finally {
             setLoading(false);
