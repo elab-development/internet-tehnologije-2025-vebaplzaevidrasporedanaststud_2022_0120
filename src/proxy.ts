@@ -12,15 +12,15 @@ export async function proxy(request: NextRequest) {
     // Content Security Policy (CSP)
     const cspHeader = `
         default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval';
-        style-src 'self' 'unsafe-inline';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com;
+        style-src 'self' 'unsafe-inline' https://www.gstatic.com;
         img-src 'self' blob: data:;
         font-src 'self';
         object-src 'none';
         base-uri 'self';
         form-action 'self';
         frame-ancestors 'none';
-        connect-src 'self' https://*;///////ovde se navodi za eksterni api
+        connect-src 'self' https://*; /* dozvoljava pozive ka eksternim API-jima */
     `.replace(/\s{2,}/g, ' ').trim();
 
     response.headers.set('Content-Security-Policy', cspHeader);
