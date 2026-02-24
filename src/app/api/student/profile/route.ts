@@ -110,7 +110,7 @@ export async function GET() {
                 }
 
                 const heldCount = countHeldTerms(term.dayOfWeek, SEMESTER_START, TODAY, holidayDates);
-                const presenceCount = studentAttendance.filter((a: any) => a.termId === term.id).length;
+                const presenceCount = studentAttendance.filter((a: { termId: string }) => a.termId === term.id).length;
 
                 statsMap[term.subjectId].held += heldCount;
                 statsMap[term.subjectId].presence += presenceCount;
