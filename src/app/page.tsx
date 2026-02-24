@@ -15,7 +15,8 @@ function EmptyState({ message }: { message: string }) {
 }
 
 async function getCabinets() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return [];
   try {
     const res = await fetch(`${apiUrl}/api/cabinets`, { cache: "no-store" });
     if (!res.ok) return [];
@@ -26,7 +27,8 @@ async function getCabinets() {
 }
 
 async function getSubjects() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return [];
   try {
     const res = await fetch(`${apiUrl}/api/subjects`, { cache: "no-store" });
     if (!res.ok) return [];
