@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { PageHeading } from "@/components/PageHeading";
@@ -28,7 +28,7 @@ export default function HolidaysPage() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showTypeModal, setShowTypeModal] = useState(false);
 
-    const fetchHolidays = async () => {
+    const fetchHolidays = useCallback(async () => {
         try {
             const res = await fetch("/api/admin/holidays");
             const result = await res.json();
@@ -40,11 +40,11 @@ export default function HolidaysPage() {
         } catch {
             setError("Greška u povezivanju sa serverom.");
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchHolidays();
-    }, []);
+    }, [fetchHolidays]);
 
     const handleToggleDate = (date: Date) => {
         setSelectedDate(date);

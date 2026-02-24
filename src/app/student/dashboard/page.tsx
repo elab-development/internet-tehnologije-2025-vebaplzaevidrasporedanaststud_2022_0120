@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/Button";
 import { StudentHeader } from "@/components/StudentHeader";
 import { Card } from "@/components/Card";
@@ -32,7 +32,7 @@ export default function StudentDashboard() {
         "NERADNI_DAN": "Neradni dan"
     };
 
-    const fetchCurrentTerm = async () => {
+    const fetchCurrentTerm = useCallback(async () => {
         try {
             const res = await fetch("/api/student/current-term");
             const result = await res.json();
@@ -44,11 +44,11 @@ export default function StudentDashboard() {
         } catch {
             setError("Greška u povezivanju sa serverom.");
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchCurrentTerm();
-    }, []);
+    }, [fetchCurrentTerm]);
 
     const handleCheckIn = async () => {
         if (!data?.term?.id) return;
