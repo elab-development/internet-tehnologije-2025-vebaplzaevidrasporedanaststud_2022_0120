@@ -24,13 +24,12 @@ const LOADER_URL = "https://www.gstatic.com/charts/loader.js";
 
 export function AttendanceChart({ data }: AttendanceChartProps) {
     const chartRef = useRef<HTMLDivElement>(null);
-    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+    const [status, setStatus] = useState<"loading" | "ready" | "error">(
+        () => (!data || data.length === 0) ? "ready" : "loading"
+    );
 
     useEffect(() => {
-        if (!data || data.length === 0) {
-            setStatus("ready");
-            return;
-        }
+        if (!data || data.length === 0) return;
 
         let cancelled = false;
 
