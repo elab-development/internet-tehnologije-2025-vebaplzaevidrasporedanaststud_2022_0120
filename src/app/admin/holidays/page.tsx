@@ -7,7 +7,8 @@ import { PageHeading } from "@/components/PageHeading";
 import { Table } from "@/components/Table";
 import { Button } from "@/components/Button";
 import { NewHolidayForm } from "@/components/NewHolidayForm";
-import { Trash2, Plus, Calendar as CalendarIcon, LayoutGrid, List } from "lucide-react";
+import { Trash2, Plus, Calendar as CalendarIcon, LayoutGrid, List, RefreshCw } from "lucide-react";
+
 import { HolidayCalendar } from "@/components/HolidayCalendar";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,28 @@ export default function HolidaysPage() {
     const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showTypeModal, setShowTypeModal] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        setError("");
+        try {
+            const res = await fetch("/api/admin/holidays-sync", { method: "POST" });
+
+            const result = await res.json();
+            if (res.ok) {
+                alert(result.message);
+                fetchHolidays();
+            } else {
+                setError(result.error || "Greška pri sinhronizaciji.");
+            }
+        } catch {
+            setError("Greška u povezivanju sa serverom.");
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
 
     const fetchHolidays = useCallback(async () => {
         try {
@@ -199,11 +222,23 @@ export default function HolidaysPage() {
                                 </button>
                             </div>
                             {!showForm && (
-                                <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-                                    <Plus size={18} />
-                                    Dodaj neradni dan
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={handleSync}
+                                        disabled={isSyncing}
+                                        variant="secondary"
+                                        className="flex items-center gap-2"
+                                    >
+                                        <RefreshCw size={18} className={isSyncing ? "animate-spin" : ""} />
+                                        {isSyncing ? "Sinhronizacija..." : "Sinhronizuj praznike"}
+                                    </Button>
+                                    <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+                                        <Plus size={18} />
+                                        Dodaj neradni dan
+                                    </Button>
+                                </div>
                             )}
+
                         </div>
                     </div>
 

@@ -5,6 +5,8 @@ import { Button } from "@/components/Button";
 import { StudentHeader } from "@/components/StudentHeader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
+import { QuoteSection } from "@/components/QuoteSection";
+
 
 export default function StudentDashboard() {
     const [data, setData] = useState<{
@@ -104,7 +106,10 @@ export default function StudentDashboard() {
                         </div>
                     )}
 
+                    <QuoteSection />
+
                     {exists ? (
+
                         <Card className="p-12">
                             {/* Status Badge */}
                             <Badge
