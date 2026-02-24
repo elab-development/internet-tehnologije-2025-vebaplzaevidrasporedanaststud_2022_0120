@@ -1,16 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/Button";
 import { StudentHeader } from "@/components/StudentHeader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
-import { PageHeading } from "@/components/PageHeading";
+import { QuoteSection } from "@/components/QuoteSection";
+
 
 export default function StudentDashboard() {
     const [data, setData] = useState<{
         exists: boolean;
-        term?: any;
+        term?: {
+            id: string;
+            subject: string;
+            type: string;
+            startTime: string;
+            endTime: string;
+            cabinet: string;
+            dayOfWeek: string;
+        };
         isCheckedIn?: boolean;
         isHoliday?: boolean;
         holidayType?: string;
@@ -25,7 +34,7 @@ export default function StudentDashboard() {
         "NERADNI_DAN": "Neradni dan"
     };
 
-    const fetchCurrentTerm = async () => {
+    const fetchCurrentTerm = useCallback(async () => {
         try {
             const res = await fetch("/api/student/current-term");
             const result = await res.json();
@@ -34,14 +43,16 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška pri učitavanju termina.");
             }
-        } catch (_err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         }
-    };
+    }, []);
 
     useEffect(() => {
-        fetchCurrentTerm();
-    }, []);
+        Promise.resolve().then(() => {
+            fetchCurrentTerm();
+        });
+    }, [fetchCurrentTerm]);
 
     const handleCheckIn = async () => {
         if (!data?.term?.id) return;
@@ -62,7 +73,7 @@ export default function StudentDashboard() {
             } else {
                 setError(result.error || "Greška prilikom prijave.");
             }
-        } catch (_err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         }
     };
@@ -95,7 +106,10 @@ export default function StudentDashboard() {
                         </div>
                     )}
 
+                    <QuoteSection />
+
                     {exists ? (
+
                         <Card className="p-12">
                             {/* Status Badge */}
                             <Badge
@@ -110,13 +124,13 @@ export default function StudentDashboard() {
                             <div className="space-y-6 mb-10">
                                 <div>
                                     <h1 className="text-5xl font-serif font-bold text-brand-blue mb-2 text-balance leading-tight">
-                                        {currentTerm.subject}
+                                        {currentTerm?.subject}
                                     </h1>
                                     <div className="flex items-center gap-3 text-brand-blue/60">
                                         <span className="px-3 py-1 rounded-lg bg-brand-blue/5 text-sm font-bold uppercase tracking-wider">
-                                            {currentTerm.type}
+                                            {currentTerm?.type}
                                         </span>
-                                        <span className="text-sm font-medium">{currentTerm.dayOfWeek}</span>
+                                        <span className="text-sm font-medium">{currentTerm?.dayOfWeek}</span>
                                     </div>
                                 </div>
 
@@ -126,7 +140,7 @@ export default function StudentDashboard() {
                                             Vreme
                                         </p>
                                         <p className="text-2xl font-bold text-brand-blue">
-                                            {currentTerm.startTime.slice(0, 5)} - {currentTerm.endTime.slice(0, 5)}
+                                            {currentTerm?.startTime.slice(0, 5)} - {currentTerm?.endTime.slice(0, 5)}
                                         </p>
                                     </div>
                                     <div>
@@ -134,7 +148,7 @@ export default function StudentDashboard() {
                                             Učionica
                                         </p>
                                         <p className="text-2xl font-bold text-brand-blue">
-                                            {currentTerm.cabinet}
+                                            {currentTerm?.cabinet}
                                         </p>
                                     </div>
                                 </div>

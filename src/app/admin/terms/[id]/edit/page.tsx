@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { Badge } from "@/components/Badge";
+import { Subject, Cabinet, StudentGroup } from "@/shared/types";
 
 const DAYS_OF_WEEK = [
     { value: "PONEDELJAK", label: "Ponedeljak" },
@@ -42,9 +43,9 @@ export default function EditTermPage({ params }: { params: Promise<{ id: string 
     });
 
     // Options
-    const [subjects, setSubjects] = useState<any[]>([]);
-    const [cabinets, setCabinets] = useState<any[]>([]);
-    const [groups, setGroups] = useState<any[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [cabinets, setCabinets] = useState<Cabinet[]>([]);
+    const [groups, setGroups] = useState<StudentGroup[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -79,8 +80,9 @@ export default function EditTermPage({ params }: { params: Promise<{ id: string 
                     groupId: term.groupId,
                 });
 
-            } catch (err: any) {
-                setError(err.message || "Greška pri učitavanju podataka.");
+            } catch (err) {
+                const errorObj = err as Error;
+                setError(errorObj.message || "Greška pri učitavanju podataka.");
             } finally {
                 setInitialLoading(false);
             }
@@ -109,7 +111,7 @@ export default function EditTermPage({ params }: { params: Promise<{ id: string 
             } else {
                 setError(data.error || "Došlo je do greške.");
             }
-        } catch (err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         } finally {
             setLoading(false);

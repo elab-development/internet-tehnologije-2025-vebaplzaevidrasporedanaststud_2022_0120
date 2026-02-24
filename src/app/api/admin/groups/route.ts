@@ -26,7 +26,7 @@ export async function GET() {
             .orderBy(studentGroups.name);
 
         return NextResponse.json(allGroups);
-    } catch (error) {
+    } catch {
         return NextResponse.json(
             { error: "Neuspešno dohvatanje grupa." },
             { status: 500 }

@@ -5,6 +5,30 @@ import { eq, and, sql } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 import { countHeldTerms } from "@/lib/attendance";
 
+interface SubjectStat {
+    subjectId: string;
+    subjectTitle: string;
+    presence: number;
+    held: number;
+    absence: number;
+    attendancePercentage: number;
+}
+
+interface StudentProfile {
+    id: string;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    indexNumber?: string | null;
+    studyProgram?: "Informacioni sistemi" | "Menadzment" | null;
+    yearOfStudy?: number | null;
+    pictureUrl?: string | null;
+    groupId?: string | null;
+    groupName?: string | null;
+    subjectStats?: SubjectStat[];
+}
+
 // GET /api/student/profile — returns logged-in student's full profile including attendance stats
 export async function GET() {
     try {
@@ -37,7 +61,7 @@ export async function GET() {
             return NextResponse.json({ error: "Student nije pronađen." }, { status: 404 });
         }
 
-        const profile: any = result[0];
+        const profile = result[0] as StudentProfile;
 
         // Fetch attendance stats if group is assigned
         if (profile.groupId) {
@@ -62,7 +86,7 @@ export async function GET() {
                 .select({ date: holidays.date })
                 .from(holidays);
 
-            const holidayDates = allHolidays.map(h => h.date);
+            const holidayDates = allHolidays.map((h: { date: string }) => h.date);
 
             // Calculation parameters
             const SEMESTER_START = new Date("2026-02-16"); // Adjust if needed
@@ -86,16 +110,20 @@ export async function GET() {
                 }
 
                 const heldCount = countHeldTerms(term.dayOfWeek, SEMESTER_START, TODAY, holidayDates);
-                const presenceCount = studentAttendance.filter(a => a.termId === term.id).length;
+                const presenceCount = studentAttendance.filter((a: { termId: string }) => a.termId === term.id).length;
 
                 statsMap[term.subjectId].held += heldCount;
                 statsMap[term.subjectId].presence += presenceCount;
             }
 
             // Calculate absences and convert to array
-            profile.subjectStats = Object.values(statsMap).map(stat => ({
-                ...stat,
-                absence: Math.max(0, stat.held - stat.presence)
+            profile.subjectStats = Object.entries(statsMap).map(([subjectId, stat]) => ({
+                subjectId,
+                subjectTitle: stat.subjectTitle,
+                presence: stat.presence,
+                held: stat.held,
+                absence: stat.held - stat.presence,
+                attendancePercentage: stat.held > 0 ? (stat.presence / stat.held) * 100 : 0
             }));
         } else {
             profile.subjectStats = [];

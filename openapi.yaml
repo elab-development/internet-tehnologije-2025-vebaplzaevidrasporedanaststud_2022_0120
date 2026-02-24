@@ -92,6 +92,19 @@ paths:
       responses:
         200:
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: string }
+                    name: { type: string }
+                    studyProgram: { type: string }
+                    yearOfStudy: { type: integer }
+                    alphabetHalf: { type: string }
+                    studentCount: { type: integer }
   /admin/holidays:
     get:
       summary: Get all holidays
@@ -211,6 +224,48 @@ paths:
       responses:
         200:
           description: OK
+  /student/profile:
+    get:
+      summary: Get student profile data
+      tags: [Student]
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  username: { type: string }
+                  email: { type: string }
+                  firstName: { type: string }
+                  lastName: { type: string }
+                  indexNumber: { type: string }
+                  studyProgram: { type: string }
+                  yearOfStudy: { type: integer }
+                  pictureUrl: { type: string, nullable: true }
+                  groupId: { type: string, nullable: true }
+                  groupName: { type: string, nullable: true }
+    patch:
+      summary: Update student profile
+      tags: [Student]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username: { type: string, minLength: 3 }
+      responses:
+        200:
+          description: OK
+        400:
+          description: Validation error
+        409:
+          description: Username conflict
   /student/schedule:
     get:
       summary: Get the student's personal schedule

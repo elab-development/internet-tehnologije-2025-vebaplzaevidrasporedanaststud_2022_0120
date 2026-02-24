@@ -158,7 +158,7 @@ export default function StudentCalendarPage() {
                 if (scheduleRes.ok && scheduleData.schedule) {
                     setSchedule(scheduleData.schedule);
                 }
-            } catch (err) {
+            } catch {
                 setError("Greška u povezivanju sa serverom.");
             } finally {
                 setLoading(false);

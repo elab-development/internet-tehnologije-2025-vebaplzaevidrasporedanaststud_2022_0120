@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { Badge } from "@/components/Badge";
+import { Subject, Cabinet, StudentGroup } from "@/shared/types";
 
 const DAYS_OF_WEEK = [
     { value: "PONEDELJAK", label: "Ponedeljak" },
@@ -41,9 +42,9 @@ export default function NewTermPage() {
     });
 
     // Options
-    const [subjects, setSubjects] = useState<any[]>([]);
-    const [cabinets, setCabinets] = useState<any[]>([]);
-    const [groups, setGroups] = useState<any[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [cabinets, setCabinets] = useState<Cabinet[]>([]);
+    const [groups, setGroups] = useState<StudentGroup[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,7 +70,7 @@ export default function NewTermPage() {
                 if (cabs.length > 0) setFormData(prev => ({ ...prev, cabinetId: cabs[0].id }));
                 if (grps.length > 0) setFormData(prev => ({ ...prev, groupId: grps[0].id }));
 
-            } catch (err) {
+            } catch {
                 setError("Greška pri učitavanju podataka za formu.");
             } finally {
                 setInitialLoading(false);
@@ -107,7 +108,7 @@ export default function NewTermPage() {
             } else {
                 setError(data.error || "Došlo je do greške.");
             }
-        } catch (err) {
+        } catch {
             setError("Greška u povezivanju sa serverom.");
         } finally {
             setLoading(false);
