@@ -52,7 +52,7 @@ export function QuoteSection() {
             <div className="relative z-10 flex flex-col items-center text-center">
                 <Quote className="text-brand-gold mb-4 opacity-50" size={32} />
                 <p className="text-xl font-serif italic text-brand-blue mb-4 leading-relaxed max-w-2xl px-4">
-                    "{quote.q}"
+                    &quot;{quote.q}&quot;
                 </p>
                 <div className="flex items-center gap-2">
                     <div className="h-[1px] w-8 bg-brand-gold/30" />

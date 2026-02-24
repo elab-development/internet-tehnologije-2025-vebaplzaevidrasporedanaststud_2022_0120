@@ -7,6 +7,7 @@ import { Badge } from "@/components/Badge";
 import { PageHeading } from "@/components/PageHeading";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { AttendanceChart } from "@/components/AttendanceChart";
 
 interface SubjectStat {
     subjectTitle: string;
@@ -299,6 +300,16 @@ export default function StudentProfilePage() {
                                         </tbody>
                                     </table>
                                 </div>
+                            </Card>
+
+                            {/* Attendance Chart */}
+                            <Card className="p-10 mb-20">
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="h-2 w-10 bg-brand-gold rounded-full" />
+                                    <h2 className="text-2xl font-bold text-brand-blue">Vizualizacija prisustva</h2>
+                                    <Badge variant="blue">Google Charts</Badge>
+                                </div>
+                                <AttendanceChart data={profile.subjectStats ?? []} />
                             </Card>
                         </div>
                     )}

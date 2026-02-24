@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { users, students, studentGroups, attendance, terms, subjects, holidays } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { getAuthSession } from "@/lib/auth";
 import { countHeldTerms } from "@/lib/attendance";
 
@@ -110,7 +110,7 @@ export async function GET() {
                 }
 
                 const heldCount = countHeldTerms(term.dayOfWeek, SEMESTER_START, TODAY, holidayDates);
-                const presenceCount = studentAttendance.filter((a: any) => a.termId === term.id).length;
+                const presenceCount = studentAttendance.filter((a: { termId: string }) => a.termId === term.id).length;
 
                 statsMap[term.subjectId].held += heldCount;
                 statsMap[term.subjectId].presence += presenceCount;
