@@ -1,47 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
-import { Badge } from "@/components/Badge";
+import { HomeDataGrid } from "@/components/HomeDataGrid";
 
-// za prazna polja
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="min-h-[400px] text-center border border-brand-blue/5 rounded-[2rem] bg-white/50 backdrop-blur-sm flex items-center justify-center w-full">
-      <p className="text-brand-blue/30 font-serif italic text-xl tracking-tight px-12 leading-relaxed max-w-sm">
-        {message}
-      </p>
-    </div>
-  );
-}
-
-async function getCabinets() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return [];
-  try {
-    const res = await fetch(`${apiUrl}/api/cabinets`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-async function getSubjects() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return [];
-  try {
-    const res = await fetch(`${apiUrl}/api/subjects`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-export default async function HomePage() {
-  const cabinets = await getCabinets();
-  const subjects = await getSubjects();
-
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#FDFCFB] selection:bg-brand-gold/30">
       {/* Navigation - Framed and Centered */}
@@ -68,7 +29,6 @@ export default async function HomePage() {
       <section className="relative pt-48 pb-20 overflow-hidden">
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-3xl">
-
             <h1 className="text-7xl md:text-9xl font-serif font-bold leading-[0.85] text-brand-blue mb-10">
               Dobrodošli na <span className="text-brand-gold italic">FON!</span>
             </h1>
@@ -80,77 +40,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Grid Content */}
-      <section className="py-20 border-t border-brand-blue/5">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-
-            {/* Subjects - Main Column */}
-            <div className="lg:col-span-8 flex flex-col">
-              <div className="flex items-center gap-4 mb-12">
-                <h2 className="text-4xl font-serif font-bold text-brand-blue">Predmeti</h2>
-                <div className="h-[1px] flex-1 bg-brand-blue/10" />
-                <span className="font-mono text-sm text-brand-gold">{subjects.length} predmeta</span>
-              </div>
-
-              {subjects.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {subjects.map((subject: { id: string, espb: number, title: string, description: string }) => (
-                    <Card key={subject.id} className="group p-8 border-brand-blue/5 bg-white hover:border-brand-gold/30 hover:shadow-2xl hover:shadow-brand-gold/5 transition-all">
-                      <div className="flex justify-between items-start mb-6">
-                        <Badge variant="blue">
-                          ESPB: {subject.espb}
-                        </Badge>
-                      </div>
-                      <h3 className="text-2xl font-serif font-bold text-brand-blue mb-3 group-hover:text-brand-gold transition-colors leading-tight">
-                        {subject.title}
-                      </h3>
-                      <p className="text-brand-blue/50 text-sm leading-relaxed">
-                        {subject.description}
-                      </p>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState message="Trenutno nema dostupnih predmeta u bazi podataka." />
-              )}
-            </div>
-
-            {/* Cabinets - Sidebar Column */}
-            <div className="lg:col-span-4 flex flex-col">
-              <div className="sticky top-32 flex flex-col">
-                <div className="flex items-center gap-4 mb-12">
-                  <h2 className="text-4xl font-serif font-bold text-brand-blue">Kabineti</h2>
-                  <div className="h-[1px] flex-1 bg-brand-blue/10" />
-                  <span className="font-mono text-sm text-brand-gold">{cabinets.length} kabineta</span>
-                </div>
-
-                {cabinets.length > 0 ? (
-                  <div className="space-y-4">
-                    {cabinets.map((cabinet: { id: string, type: string, number: string, capacity: number }) => (
-                      <Card key={cabinet.id} variant="primary" className="p-6 group hover:bg-brand-gold transition-colors rounded-2xl">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1 group-hover:text-brand-blue/70">{cabinet.type}</p>
-                            <h4 className="text-3xl font-serif font-bold">{cabinet.number}</h4>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold">{cabinet.capacity}</p>
-                            <p className="text-[8px] font-bold uppercase text-white/40 group-hover:text-brand-blue/50">Mesta</p>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState message="Nema dostupnih kabineta." />
-                )}
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* Client-Side Data Grid */}
+      <HomeDataGrid />
 
       {/* Simplified Footer */}
       <footer className="py-20 border-t border-brand-blue/5 bg-white">
