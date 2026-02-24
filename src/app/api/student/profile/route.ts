@@ -7,9 +7,10 @@ import { countHeldTerms } from "@/lib/attendance";
 
 interface SubjectStat {
     subjectId: string;
-    subjectName: string;
-    totalTerms: number;
-    attendedTerms: number;
+    subjectTitle: string;
+    presence: number;
+    held: number;
+    absence: number;
     attendancePercentage: number;
 }
 
@@ -85,7 +86,7 @@ export async function GET() {
                 .select({ date: holidays.date })
                 .from(holidays);
 
-            const holidayDates = allHolidays.map(h => h.date);
+            const holidayDates = allHolidays.map((h: { date: string }) => h.date);
 
             // Calculation parameters
             const SEMESTER_START = new Date("2026-02-16"); // Adjust if needed
@@ -109,7 +110,7 @@ export async function GET() {
                 }
 
                 const heldCount = countHeldTerms(term.dayOfWeek, SEMESTER_START, TODAY, holidayDates);
-                const presenceCount = studentAttendance.filter(a => a.termId === term.id).length;
+                const presenceCount = studentAttendance.filter((a: any) => a.termId === term.id).length;
 
                 statsMap[term.subjectId].held += heldCount;
                 statsMap[term.subjectId].presence += presenceCount;
@@ -118,9 +119,10 @@ export async function GET() {
             // Calculate absences and convert to array
             profile.subjectStats = Object.entries(statsMap).map(([subjectId, stat]) => ({
                 subjectId,
-                subjectName: stat.subjectTitle,
-                totalTerms: stat.held,
-                attendedTerms: stat.presence,
+                subjectTitle: stat.subjectTitle,
+                presence: stat.presence,
+                held: stat.held,
+                absence: stat.held - stat.presence,
                 attendancePercentage: stat.held > 0 ? (stat.presence / stat.held) * 100 : 0
             }));
         } else {
