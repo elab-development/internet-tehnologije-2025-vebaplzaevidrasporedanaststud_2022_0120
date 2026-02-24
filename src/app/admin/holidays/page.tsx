@@ -43,7 +43,9 @@ export default function HolidaysPage() {
     }, []);
 
     useEffect(() => {
-        fetchHolidays();
+        Promise.resolve().then(() => {
+            fetchHolidays();
+        });
     }, [fetchHolidays]);
 
     const handleToggleDate = (date: Date) => {

@@ -47,7 +47,9 @@ export default function StudentDashboard() {
     }, []);
 
     useEffect(() => {
-        fetchCurrentTerm();
+        Promise.resolve().then(() => {
+            fetchCurrentTerm();
+        });
     }, [fetchCurrentTerm]);
 
     const handleCheckIn = async () => {
