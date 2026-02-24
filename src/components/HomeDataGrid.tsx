@@ -15,9 +15,23 @@ function EmptyState({ message }: { message: string }) {
     );
 }
 
+interface Cabinet {
+    id: string;
+    number: string;
+    capacity: number;
+    type: string;
+}
+
+interface Subject {
+    id: string;
+    title: string;
+    espb: number;
+    description: string;
+}
+
 export function HomeDataGrid() {
-    const [cabinets, setCabinets] = useState<any[]>([]);
-    const [subjects, setSubjects] = useState<any[]>([]);
+    const [cabinets, setCabinets] = useState<Cabinet[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasLoaded, setHasLoaded] = useState(false);
     const [error, setError] = useState("");
